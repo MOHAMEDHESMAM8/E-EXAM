@@ -8,6 +8,10 @@ django = "*"
 pipwin = "*"
 mysqlclient = "*"
 django-rest-framework = "*"
+djoser = "*"
+djangorestframework-simplejwt = "*"
+pillow = "*"
+drf-writable-nested = "*"
 
 [dev-packages]
 autopep8 = "*"

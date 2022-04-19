@@ -1,6 +1,7 @@
+from dataclasses import fields
 from django import forms
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
-from .models import User
+from .models import User,Professor
 from django.db.models import Q
 
 
@@ -59,7 +60,6 @@ class CustomUserCreationForm(forms.ModelForm):
 
 
 class CustomUserChangeForm(forms.ModelForm):
-
     password = ReadOnlyPasswordHashField()
 
     class Meta:
