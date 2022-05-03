@@ -26,6 +26,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'djoser',
     'user',
+    'exam',
+    'question_bank',
 ]
 
 MIDDLEWARE = [

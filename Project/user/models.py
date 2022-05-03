@@ -48,33 +48,33 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     phone_regex = RegexValidator(
         regex=r'^(010|011|012|015)', message="Phone Number must be start with 012 or 015 or 010 or 011")
-    phone = models.CharField(validators=[phone_regex], max_length= 11, unique = True)
-    first_name=models.CharField(max_length= 255)
-    last_name=models.CharField(max_length= 255)
-    is_active=models.BooleanField(default= True)
-    is_staff=models.BooleanField(default= False)
-    is_superuser=models.BooleanField(default= False)
-    role=models.CharField(
-        max_length = 10, choices = ROLE_CHOICES, default = STUDENT)
-    created_at=models.DateTimeField(auto_now_add= True)
-    updated_at=models.DateTimeField(auto_now= True)
+    phone = models.CharField(validators=[phone_regex], max_length=11, unique=True)
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+    role = models.CharField(
+        max_length=10, choices=ROLE_CHOICES, default=STUDENT)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
-    USERNAME_FIELD='email'
-    REQUIRED_FIELDS=['phone']
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['phone']
 
-    objects=CustomUserManager()
+    objects = CustomUserManager()
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
 
     class Meta:
-        ordering=('-created_at', '-updated_at', )
+        ordering = ('-created_at', '-updated_at',)
 
 
 class Professor(models.Model):
-    user =models.OneToOneField(User, on_delete = models.CASCADE, related_name = 'professor')
-    avatar=models.ImageField(
-        default = 'professor/default.jfif', upload_to = 'professor', null = True, blank = True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='professor')
+    avatar = models.ImageField(
+        default='professor/default.jfif', upload_to='professor', null=True, blank=True)
 
     def __str__(self):
         return f'{self.user.first_name} {self.user.last_name}'
@@ -88,27 +88,27 @@ class Professor(models.Model):
     def phone(self):
         return self.user.phone
 
-    @ admin.display(ordering= 'user__email')
+    @admin.display(ordering='user__email')
     def email(self):
         return self.user.email
 
     class Meta:
-        ordering=['user__email']
-    
-    
+        ordering = ['user__email']
+
 
 class Student(models.Model):
-    LEVEL_ONE='F'
-    LEVEL_TWO='S'
-    LEVEL_THREE='T'
+    LEVEL_ONE = 'F'
+    LEVEL_TWO = 'S'
+    LEVEL_THREE = 'T'
 
-    LEVEL_CHOICES=[
+    LEVEL_CHOICES = [
         (LEVEL_ONE, 'One'),
         (LEVEL_TWO, 'Two'),
         (LEVEL_THREE, 'Three'),
     ]
-    level=models.CharField(max_length = 5, choices = LEVEL_CHOICES, default = LEVEL_TWO)
-    user=models.OneToOneField(User, on_delete= models.CASCADE)
+    level = models.CharField(max_length=1, choices=LEVEL_CHOICES, default=LEVEL_TWO)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
     def __str__(self):
         return f'{self.user.first_name} {self.user.last_name}'
 
@@ -121,9 +121,26 @@ class Student(models.Model):
     def phone(self):
         return self.user.phone
 
-    @admin.display(ordering= 'user__email')
+    @admin.display(ordering='user__email')
     def email(self):
         return self.user.email
 
     class Meta:
-        ordering=['user__email']
+        ordering = ['user__email']
+
+
+class Group(models.Model):
+    name = models.CharField(max_length=100)
+    professor = models.ForeignKey(Professor, on_delete=models.CASCADE, related_name='group')
+
+
+class GroupStudents(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    group = models.ForeignKey(Professor, on_delete=models.PROTECT)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class Request(models.Model):
+    professor = models.ForeignKey(Professor, on_delete=models.CASCADE, related_name='request')
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    created_at = models.DateField(auto_now_add=True)
