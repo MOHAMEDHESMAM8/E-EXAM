@@ -8,6 +8,7 @@ class Chapter(models.Model):
     professor = models.ForeignKey(Professor, on_delete=models.CASCADE, related_name='chapter')
 
 
+
 class Question(models.Model):
     easy_level = 'E'
     medium_level = 'M'
