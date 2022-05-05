@@ -4,7 +4,6 @@ from datetime import timedelta
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-k2^y)aq!)o))6+@-!n7zyk-x%qqn-%y@^uwa*$vd6*67qh(f2&'
 
@@ -61,7 +60,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
@@ -74,6 +72,13 @@ DATABASES = {
         'PASSWORD': ''
     }
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'abdelfattahmohamed960@gmail.com'
+EMAIL_HOST_PASSWORD = '01200186617amh'
+EMAIL_USE_TLS = True
 
 
 # Password validation
@@ -137,7 +142,15 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 DJOSER = {
-    'SERIALIZERS':{
+    'LOGIN_FIELD': 'email',
+    'USER_CREATE_PASSWORD_RETYPE': True,
+    'PASSWORD_CHANGED_EMAIL_CONFIRMATION': True,
+    'PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND':True,
+    'SEND_CONFIRMATION_EMAIL': True,
+    'SET_PASSWORD_RETYPE': True,
+    'PASSWORD_RESET_CONFIRM_URL': 'api/auth/users/password-reset/{uid}/{token}{uid}/{token}',
+    'SERIALIZERS': {
         'user_create': 'user.serializers.UserCreateSerializer',
-    }
+    },
+
 }

@@ -4,8 +4,6 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save, pre_save
 
 # Signals familiar with Observer Design Pattern
-
-
 @receiver(post_save, sender=User)
 def create_new_user(sender, instance ,**kwargs):
     if kwargs['created']:
