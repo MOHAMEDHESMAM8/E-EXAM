@@ -7,6 +7,17 @@ from django.core.validators import RegexValidator, MinValueValidator, MaxValueVa
 from django.contrib import admin
 
 
+LEVEL_ONE = 'F'
+LEVEL_TWO = 'S'
+LEVEL_THREE = 'T'
+
+LEVEL_CHOICES = [
+    (LEVEL_ONE, 'One'),
+    (LEVEL_TWO, 'Two'),
+    (LEVEL_THREE, 'Three'),
+]
+
+
 class CustomUserManager(BaseUserManager):
     def _create_user(self, email, phone, password=None, **extra_fields):
         values = [email, phone]
@@ -100,15 +111,7 @@ class Professor(models.Model):
 
 
 class Student(models.Model):
-    LEVEL_ONE = 'F'
-    LEVEL_TWO = 'S'
-    LEVEL_THREE = 'T'
 
-    LEVEL_CHOICES = [
-        (LEVEL_ONE, 'One'),
-        (LEVEL_TWO, 'Two'),
-        (LEVEL_THREE, 'Three'),
-    ]
     level = models.CharField(
         max_length=1, choices=LEVEL_CHOICES, default=LEVEL_TWO)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -144,6 +147,7 @@ class Group(models.Model):
     class Meta:
         unique_together = ['name', 'professor'],
 
+
 class GroupStudents(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     group = models.ForeignKey(Group, on_delete=models.PROTECT)
@@ -153,19 +157,9 @@ class GroupStudents(models.Model):
         verbose_name = 'Students Group',
         verbose_name_plural = 'Students Groups'
         unique_together = ['student', 'group'],
-        
 
 
 class Professor_Level(models.Model):
-    LEVEL_ONE = 'F'
-    LEVEL_TWO = 'S'
-    LEVEL_THREE = 'T'
-
-    LEVEL_CHOICES = [
-        (LEVEL_ONE, 'One'),
-        (LEVEL_TWO, 'Two'),
-        (LEVEL_THREE, 'Three'),
-    ]
 
     professor = models.ForeignKey(Professor, on_delete=models.CASCADE)
     level = models.CharField(
