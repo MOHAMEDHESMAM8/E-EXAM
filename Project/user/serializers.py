@@ -1,4 +1,5 @@
 from dataclasses import fields
+from importlib.util import source_from_cache
 from djoser.serializers import UserSerializer as BaseUserSerializer, UserCreateSerializer as BaseUserCreateSerializer
 from rest_framework import serializers
 from .models import Group, User, Student, Professor, Request
@@ -53,8 +54,10 @@ class StudentProfileSerializer(serializers.Serializer):
 
 # Professor Serializer
 
+class GetStudentRequestSerializer(serializers.Serializer):
+    id=serializers.IntegerField(source = 'student')
+    first_name = serializers.CharField(max_length=255, source='student__user__first_name')
+    last_name = serializers.CharField(max_length=255, source='student__user__last_name')
+    email = serializers.CharField(max_length=255, source='student__user__email')
+    phone = serializers.CharField(max_length=255, source='student__user__phone')
 
-class AddGroupSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Group
-        fields = ['professor', 'name']
