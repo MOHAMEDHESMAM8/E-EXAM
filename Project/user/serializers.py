@@ -9,7 +9,7 @@ from drf_writable_nested import WritableNestedModelSerializer
 class UserCreateSerializer(BaseUserCreateSerializer):
     class Meta(BaseUserCreateSerializer.Meta):
         fields = ('first_name', 'last_name',
-                'phone', 'password', 'email', 'id')
+                  'phone', 'password', 'email', 'id')
 
 
 class StudentCreateSerializer(serializers.ModelSerializer):
@@ -37,8 +37,9 @@ class GetAllProfessorsSerializer(serializers.Serializer):
         max_length=255, source='professor__user__last_name')
     avatar = serializers.CharField(max_length=255, source='professor__avatar')
 
+
 class StudentProfileSerializer(serializers.Serializer):
-    id=serializers.IntegerField()
+    id = serializers.IntegerField()
     first_name = serializers.CharField(max_length=255)
     last_name = serializers.CharField(max_length=255)
     email = serializers.CharField(max_length=255)
@@ -46,18 +47,53 @@ class StudentProfileSerializer(serializers.Serializer):
 
     def update(self, instance, validated_data):
         instance.email = validated_data.get('email', instance.email)
-        instance.first_name = validated_data.get('first_name', instance.first_name)
-        instance.last_name = validated_data.get('last_name', instance.last_name)
+        instance.first_name = validated_data.get(
+            'first_name', instance.first_name)
+        instance.last_name = validated_data.get(
+            'last_name', instance.last_name)
         instance.phone = validated_data.get('last_name', instance.phone)
         instance.save()
         return instance
 
 # Professor Serializer
 
-class GetStudentRequestSerializer(serializers.Serializer):
-    id=serializers.IntegerField(source = 'student')
-    first_name = serializers.CharField(max_length=255, source='student__user__first_name')
-    last_name = serializers.CharField(max_length=255, source='student__user__last_name')
-    email = serializers.CharField(max_length=255, source='student__user__email')
-    phone = serializers.CharField(max_length=255, source='student__user__phone')
 
+class GetStudentRequestSerializer(serializers.Serializer):
+    id = serializers.IntegerField(source='student')
+    first_name = serializers.CharField(
+        max_length=255, source='student__user__first_name')
+    last_name = serializers.CharField(
+        max_length=255, source='student__user__last_name')
+    email = serializers.CharField(
+        max_length=255, source='student__user__email')
+    phone = serializers.CharField(
+        max_length=255, source='student__user__phone')
+
+
+class GetGroupDataSerailizer(serializers.Serializer):
+    id = serializers.IntegerField(source='group__id')
+    students_count = serializers.IntegerField(source='student_count')
+    group_name = serializers.CharField(max_length=255, source='group__name')
+    created_at = serializers.CharField(
+        max_length=255, source='group__created_at')
+
+
+class GetGroupNameSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=255)
+
+
+class GroupDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Group
+        fields = ['name']
+
+
+class GetStudentsGroupSerializer(serializers.Serializer):
+    first_name = serializers.CharField(
+        max_length=255, source='student__user__first_name')
+    last_name = serializers.CharField(
+        max_length=255, source='student__user__last_name')
+    email = serializers.CharField(
+        max_length=255, source='student__user__email')
+    phone = serializers.CharField(
+        max_length=255, source='student__user__phone')

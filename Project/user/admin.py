@@ -69,7 +69,7 @@ class StudentAdmin(admin.ModelAdmin):
 
 @admin.register(Group)
 class GroupAdmin(admin.ModelAdmin):
-    list_display = ['professor_name', 'name']
+    list_display = ['professor_name', 'name', 'created_at']
     list_per_page = 20
     @admin.display(description='Professor name')
     def professor_name(self, object):
