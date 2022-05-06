@@ -135,6 +135,7 @@ class Group(models.Model):
     professor = models.ForeignKey(Professor, on_delete=models.CASCADE, related_name='group')
     level = models.CharField(
         max_length=1, choices=LEVEL_CHOICES, default=LEVEL_TWO)
+    created_at = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return self.name
