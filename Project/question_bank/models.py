@@ -1,12 +1,6 @@
 from django.db import models
 
-from user.models import Professor
-
-
-class Chapter(models.Model):
-    name = models.CharField(max_length=100)
-    professor = models.ForeignKey(Professor, on_delete=models.CASCADE, related_name='chapter')
-
+from user.models import  Chapter
 
 
 class Question(models.Model):

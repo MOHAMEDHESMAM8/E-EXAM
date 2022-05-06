@@ -29,7 +29,6 @@ class GetChapterExams(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-
 class CreateExam(APIView):
     def post(self, request):
         serializer = CreateExamSerializers(data=request.data)
