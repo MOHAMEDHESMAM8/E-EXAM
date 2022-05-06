@@ -145,7 +145,7 @@ class Group(models.Model):
 
 
 class GroupStudents(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE , related_name='studentgroup')
     group = models.ForeignKey(Professor, on_delete=models.PROTECT)
     created_at = models.DateTimeField(auto_now_add=True)
 
