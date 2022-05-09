@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin
 from .forms import CustomUserCreationForm, CustomUserChangeForm
-from .models import User, Professor, Student, Group, GroupStudents, Professor_Level, Request
+from .models import User, Professor, Student, Group, Professor_Student, Professor_Level, Request
 from django import forms
 
 @admin.register(User)
@@ -75,7 +75,7 @@ class GroupAdmin(admin.ModelAdmin):
     def professor_name(self, object):
         return f'{object.professor.user.first_name} {object.professor.user.last_name}'
 
-@admin.register(GroupStudents)
+@admin.register(Professor_Student)
 class StudentGroupAdmin(admin.ModelAdmin):
     list_display = ['student_name', 'professor_name', 'group']
     list_per_page = 20

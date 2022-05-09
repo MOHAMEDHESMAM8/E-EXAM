@@ -1,11 +1,9 @@
-from tabnanny import verbose
 from django.db import models
 from django.contrib.auth.base_user import BaseUserManager
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
 from django.contrib import admin
-
 
 LEVEL_ONE = 'F'
 LEVEL_TWO = 'S'
@@ -141,7 +139,7 @@ class Group(models.Model):
         Professor, on_delete=models.CASCADE, related_name='group')
     level = models.CharField(
         max_length=1, choices=LEVEL_CHOICES, default=LEVEL_TWO)
-    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    created_at = models.DateField(auto_now_add=True, blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -150,20 +148,17 @@ class Group(models.Model):
         unique_together = ['name', 'professor'],
 
 
-class GroupStudents(models.Model):
-    student = models.OneToOneField(Student, on_delete=models.CASCADE)
-    group = models.ForeignKey(
-        Group, on_delete=models.PROTECT, related_name='studentgroup')
+class Professor_Student(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    group = models.ForeignKey(Group, on_delete=models.PROTECT)
+    professor = models.ForeignKey(Professor, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        verbose_name = 'Students Group',
-        verbose_name_plural = 'Students Groups'
-        unique_together = ['student', 'group'],
+        unique_together = ['student', 'professor'],
 
 
 class Professor_Level(models.Model):
-
     professor = models.ForeignKey(Professor, on_delete=models.CASCADE)
     level = models.CharField(
         max_length=1, choices=LEVEL_CHOICES, default=LEVEL_TWO)
@@ -183,3 +178,11 @@ class Request(models.Model):
 
     class Meta:
         unique_together = ['professor', 'student'],
+
+
+class Chapter(models.Model):
+    name = models.CharField(max_length=100)
+    professor = models.ForeignKey(
+        Professor, on_delete=models.CASCADE, related_name='chapter')
+    level = models.CharField(
+        max_length=1, choices=LEVEL_CHOICES, default=LEVEL_TWO)

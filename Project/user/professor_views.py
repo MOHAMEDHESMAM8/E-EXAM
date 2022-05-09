@@ -1,15 +1,15 @@
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import Group, Professor, Request, GroupStudents, Student
-from .serializers import GetStudentRequestSerializer, GetGroupDataSerailizer, GroupDetailSerializer, GetGroupNameSerializer, GetStudentsGroupSerializer
+from .models import Group, Professor, Professor_Student, Request, Student
+from .serializers import GetStudentRequestSerializer, GetGroupDataSerailizer, GroupDetailSerializer, GetGroupNameSerializer, GetProfessorStudentsSerializer
 from django.db.models import Count
 from django.http import Http404
 
 
 class GroupView(APIView):
     def get(self, request, level):
-        groups = GroupStudents.objects.filter(group__professor__user=request.user, group__level=level).values(
+        groups = Professor_Student.objects.filter(group__professor__user=request.user, group__level=level).values(
             'group__name', 'group__created_at', 'group__id').annotate(student_count=Count('student'))
         serializer = GetGroupDataSerailizer(groups, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -47,22 +47,22 @@ class GroupDetailsView(APIView):
 
     def delete(self, request, group_id):
         group = self.get_object(group_id)
-        students_group = GroupStudents.objects.filter(group=group)
+        students_group = Professor_Student.objects.filter(group=group)
         if students_group:
             return Response("Group is not empty", status=status.HTTP_400_BAD_REQUEST)
         group.delete()
         return Response('Group is deleted successfully', status=status.HTTP_204_NO_CONTENT)
 
 
-class GetStudentsGroupView(APIView):
+class GetStudentsOfGroupView(APIView):
     def get(self, request, group_id):
-        students = GroupStudents.objects.select_related('student').filter(group=group_id).values(
-            'student__user__first_name', 'student__user__last_name', 'student__user__email', 'student__user__phone')
-        serializer = GetStudentsGroupSerializer(students, many=True)
+        students = Professor_Student.objects.select_related('student').filter(group=group_id).values(
+            'student__user__first_name', 'student__user__last_name', 'student__user__email', 'student__user__phone', 'student')
+        serializer = GetStudentRequestSerializer(students, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class GetStudentRequestView(APIView):
+class GetStudentsRequestView(APIView):
     def get(self, request):
         requests = Request.objects.select_related('student').filter(professor__user=request.user).values(
             'student', 'student__user__email', 'student__user__first_name', 'student__user__last_name', 'student__user__phone')
@@ -70,6 +70,18 @@ class GetStudentRequestView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-
 # class AddStudentToGroupView(APIView):
 #     def post(self, request):
+
+class GetProfessorStudentView(APIView):
+    def get(self, request):
+        groups = Group.objects.filter(
+            professor__user=request.user).values('id')
+        students = Professor_Student.objects.select_related('students').filter(group__in=groups).values(
+            'student', 'student__user__email', 'student__user__first_name', 'student__user__last_name', 'student__user__phone', 'group__name')
+        serializer = GetProfessorStudentsSerializer(students, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+# class AcceptStudentsRequests(APIView):
+#     def post(self, request):
+        

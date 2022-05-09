@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Professor, Request, Student, Professor_Level, User
-from .serializers import StudentCreateSerializer, GetAllProfessorsSerializer, StudentProfileSerializer
+from .serializers import StudentCreateSerializer, GetAllProfessorsSerializer, StudentProfileSerializer, StudentRequestSerializer
 from django.shortcuts import get_object_or_404
 from django.http import Http404
 
@@ -27,15 +27,11 @@ class GetAllProfessorView(APIView):
 
 class StudentRequestView(APIView):
     def post(self, request):
-        try:
-            professor = request.data.pop('professor')
-            student = Student.objects.get(user=request.user)
-            student_request = Request.objects.create(
-                professor_id=professor, student_id=student.id)
-            student_request.save()
-            return Response('Request is sent successfully', status=status.HTTP_200_OK)
-        except:
-            return Response('Error, please try again', status=status.HTTP_400_BAD_REQUEST)
+        serializer = StudentRequestSerializer(
+            data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class StudentProfileView(APIView):

@@ -1,5 +1,6 @@
 from dataclasses import fields
 from importlib.util import source_from_cache
+from pyexpat import model
 from djoser.serializers import UserSerializer as BaseUserSerializer, UserCreateSerializer as BaseUserCreateSerializer
 from rest_framework import serializers
 from .models import Group, User, Student, Professor, Request
@@ -55,6 +56,22 @@ class StudentProfileSerializer(serializers.Serializer):
         instance.save()
         return instance
 
+
+class StudentRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Request
+        fields = ['professor']
+
+    def create(self, validated_data):
+        request = Request()
+        print("===================")
+        print(self.context['request'].user.student)
+        request.professor = validated_data.pop('professor')
+        request.student = self.context['request'].user.student
+        request.save()
+        return request
+
+
 # Professor Serializer
 
 
@@ -88,7 +105,8 @@ class GroupDetailSerializer(serializers.ModelSerializer):
         fields = ['name']
 
 
-class GetStudentsGroupSerializer(serializers.Serializer):
+class GetProfessorStudentsSerializer(serializers.Serializer):
+    id = serializers.IntegerField(source='student')
     first_name = serializers.CharField(
         max_length=255, source='student__user__first_name')
     last_name = serializers.CharField(
@@ -97,3 +115,4 @@ class GetStudentsGroupSerializer(serializers.Serializer):
         max_length=255, source='student__user__email')
     phone = serializers.CharField(
         max_length=255, source='student__user__phone')
+    group = serializers.CharField(max_length=255, source='group__name')

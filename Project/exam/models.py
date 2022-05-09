@@ -1,5 +1,4 @@
 from django.db import models
-
 from question_bank.models import Chapter
 from user.models import Professor, Student
 
