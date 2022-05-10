@@ -1,6 +1,7 @@
+from rest_framework.permissions import IsAuthenticated
 from user.models import Chapter
 from .models import Exam
-from .serializers import *
+from .serializers import chaptersSerializers, ExamSerializers, GetCreateExamSerializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -8,6 +9,8 @@ from django.db.models import Prefetch
 
 
 class GetProfessorChapters(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, level):
 
         if level == 1:
@@ -23,6 +26,8 @@ class GetProfessorChapters(APIView):
 
 
 class GetChapterExams(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, chapter):
         data = Exam.objects.filter(chapter=chapter)
         serializer = ExamSerializers(data, many=True)
@@ -30,12 +35,23 @@ class GetChapterExams(APIView):
 
 
 class CreateExam(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
-        serializer = CreateExamSerializers(data=request.data)
+        serializer = GetCreateExamSerializers(data=request.data, context={'request': request})
         if serializer.is_valid():
-            serializer.create(validated_data=request.data, professor=request.user.id)
+            serializer.create(validated_data=request.data)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetExam(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, exam):
+        exam_obj = Exam.objects.get(pk=exam)
+        serializer = GetCreateExamSerializers(exam_obj)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 # if level == 1:
 #     data = Chapter.objects.prefetch_related(

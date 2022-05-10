@@ -58,7 +58,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     phone_regex = RegexValidator(
         regex=r'^(010|011|012|015)', message="Phone Number must be start with 012 or 015 or 010 or 011")
-    phone = models.CharField(validators=[phone_regex], max_length=11, unique=True)
+    phone = models.CharField(
+        validators=[phone_regex], max_length=11, unique=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
@@ -82,7 +83,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Professor(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='professor')
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name='professor')
     avatar = models.ImageField(
         default='professor/default.jfif', upload_to='professor', null=True, blank=True)
 
@@ -107,7 +109,8 @@ class Professor(models.Model):
 
 
 class Student(models.Model):
-    level = models.CharField(max_length=1, choices=LEVEL_CHOICES, default=LEVEL_TWO)
+    level = models.CharField(
+        max_length=1, choices=LEVEL_CHOICES, default=LEVEL_TWO)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -132,10 +135,11 @@ class Student(models.Model):
 
 class Group(models.Model):
     name = models.CharField(max_length=100)
-    professor = models.ForeignKey(Professor, on_delete=models.CASCADE, related_name='group')
+    professor = models.ForeignKey(
+        Professor, on_delete=models.CASCADE, related_name='group')
     level = models.CharField(
         max_length=1, choices=LEVEL_CHOICES, default=LEVEL_TWO)
-    created_at = models.DateField(auto_now_add=True)
+    created_at = models.DateField(auto_now_add=True, blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -144,15 +148,14 @@ class Group(models.Model):
         unique_together = ['name', 'professor'],
 
 
-class GroupStudents(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE , related_name='studentgroup')
-    group = models.ForeignKey(Professor, on_delete=models.PROTECT)
+class Professor_Student(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    group = models.ForeignKey(Group, on_delete=models.PROTECT)
+    professor = models.ForeignKey(Professor, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        verbose_name = 'Students Group',
-        verbose_name_plural = 'Students Groups'
-        unique_together = ['student', 'group'],
+        unique_together = ['student', 'professor'],
 
 
 class Professor_Level(models.Model):
@@ -168,7 +171,8 @@ class Professor_Level(models.Model):
 
 
 class Request(models.Model):
-    professor = models.ForeignKey(Professor, on_delete=models.CASCADE, related_name='request')
+    professor = models.ForeignKey(
+        Professor, on_delete=models.CASCADE, related_name='request')
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     created_at = models.DateField(auto_now_add=True)
 
@@ -178,5 +182,7 @@ class Request(models.Model):
 
 class Chapter(models.Model):
     name = models.CharField(max_length=100)
-    professor = models.ForeignKey(Professor, on_delete=models.CASCADE, related_name='chapter')
-    level = models.CharField(max_length=1, choices=LEVEL_CHOICES, default=LEVEL_TWO)
+    professor = models.ForeignKey(
+        Professor, on_delete=models.CASCADE, related_name='chapter')
+    level = models.CharField(
+        max_length=1, choices=LEVEL_CHOICES, default=LEVEL_TWO)

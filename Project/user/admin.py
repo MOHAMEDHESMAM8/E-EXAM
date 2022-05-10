@@ -3,8 +3,9 @@ from django.contrib import admin
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin
 from .forms import CustomUserCreationForm, CustomUserChangeForm
-from .models import User, Professor, Student, Group, GroupStudents, Professor_Level, Request
+from .models import User, Professor, Student, Group, Professor_Student, Professor_Level, Request
 from django import forms
+
 
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
@@ -21,7 +22,7 @@ class CustomUserAdmin(UserAdmin):
     readonly_fields = ('created_at', 'updated_at', 'last_login')
 
     fieldsets = (
-        (None, {'fields': (('first_name', 'last_name'),'password', 'email', 'phone', 'role')}),
+        (None, {'fields': (('first_name', 'last_name'), 'password', 'email', 'phone', 'role')}),
         ('Permissions', {
             'fields': ('is_active', 'is_superuser', 'is_staff',)}),
         ('Time', {'fields': ('last_login', 'created_at', 'updated_at')}),
@@ -40,6 +41,7 @@ class CustomUserAdmin(UserAdmin):
     def user_name(self, object):
         return f'{object.first_name} {object.last_name}'
 
+
 @admin.register(Professor)
 class ProfessorAdmin(admin.ModelAdmin):
     list_display = ['professor_name', 'email', 'phone']
@@ -47,6 +49,7 @@ class ProfessorAdmin(admin.ModelAdmin):
     list_per_page = 20
     list_select_related = ['user']
     ordering = ['user__email']
+
     @admin.display(description='Professor name')
     def professor_name(self, object):
         return f'{object.user.first_name} {object.user.last_name}'
@@ -55,12 +58,12 @@ class ProfessorAdmin(admin.ModelAdmin):
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
     list_display = ['student_name', 'email', 'phone']
-    list_display_links = ('student_name','email')
+    list_display_links = ('student_name', 'email')
     list_per_page = 20
     list_select_related = ['user']
     ordering = ['user__first_name', 'user__last_name']
     search_fields = ['user__first_name__istartswith',
-                    'user__phone', 'user__email']
+                     'user__phone', 'user__email']
 
     @admin.display(description='Student name')
     def student_name(self, object):
@@ -69,24 +72,29 @@ class StudentAdmin(admin.ModelAdmin):
 
 @admin.register(Group)
 class GroupAdmin(admin.ModelAdmin):
-    list_display = ['professor_name', 'name']
+    list_display = ['professor_name', 'name', 'created_at']
     list_per_page = 20
+
     @admin.display(description='Professor name')
     def professor_name(self, object):
         return f'{object.professor.user.first_name} {object.professor.user.last_name}'
 
-@admin.register(GroupStudents)
+
+@admin.register(Professor_Student)
 class StudentGroupAdmin(admin.ModelAdmin):
     list_display = ['student_name', 'professor_name', 'group']
     list_per_page = 20
     ordering = ['group']
     search_fields = ['first_name', 'group']
+
     @admin.display(description='Student name')
     def student_name(self, object):
         return f'{object.student.user.first_name} {object.student.user.last_name}'
+
     @admin.display(description='Professor name')
     def professor_name(self, object):
         return f'{object.group.professor.user.first_name} {object.group.professor.user.last_name}'
+
 
 admin.site.register(Professor_Level)
 admin.site.register(Request)
