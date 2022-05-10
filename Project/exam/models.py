@@ -46,3 +46,5 @@ class ExamGroups(models.Model):
     start_at = models.DateTimeField()
     end_at = models.DateTimeField()
     created_at = models.DateField(auto_now_add=True)
+
+# test
