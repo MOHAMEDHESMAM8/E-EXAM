@@ -31,12 +31,27 @@ class StudentCreateSerializer(serializers.ModelSerializer):
 
 
 class GetAllProfessorsSerializer(serializers.Serializer):
-    id = serializers.IntegerField(source='professor__user__id')
+    id = serializers.IntegerField(source='professor')
     first_name = serializers.CharField(
         max_length=255, source='professor__user__first_name')
     last_name = serializers.CharField(
         max_length=255, source='professor__user__last_name')
     avatar = serializers.CharField(max_length=255, source='professor__avatar')
+    status = serializers.SerializerMethodField()
+
+    def get_status(self, obj):
+        student = self.context['request'].user.student
+        requests = Request.objects.filter(
+            student=student, professor=obj['professor'])
+        if requests.exists():
+            data = {
+                'status': 'Pending'
+            }
+        else:
+            data = {
+                'status': 'Join'
+            }
+        return data
 
 
 class StudentProfileSerializer(serializers.Serializer):
@@ -64,8 +79,6 @@ class StudentRequestSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         request = Request()
-        print("===================")
-        print(self.context['request'].user.student)
         request.professor = validated_data.pop('professor')
         request.student = self.context['request'].user.student
         request.save()
@@ -97,6 +110,20 @@ class GetGroupDataSerailizer(serializers.Serializer):
 
 class GetGroupNameSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=255)
+
+
+class AddGroupSerilizer(serializers.ModelSerializer):
+    class Meta:
+        model = Group
+        fields = ['name', 'level']
+
+    def create(self, validated_data):
+        group = Group()
+        group.name = validated_data.pop('name')
+        group.level = validated_data.pop('level')
+        group.professor = self.context['request'].user.professor
+        group.save()
+        return group
 
 
 class GroupDetailSerializer(serializers.ModelSerializer):

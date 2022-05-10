@@ -2,27 +2,27 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Group, Professor, Professor_Student, Request, Student
-from .serializers import GetStudentRequestSerializer, GetGroupDataSerailizer, GroupDetailSerializer, GetGroupNameSerializer, GetProfessorStudentsSerializer
+from .serializers import GetStudentRequestSerializer, GetGroupDataSerailizer, GroupDetailSerializer, GetGroupNameSerializer, GetProfessorStudentsSerializer, AddGroupSerilizer
 from django.db.models import Count
 from django.http import Http404
 
 
-class GroupView(APIView):
+class GetProfessorGroupsView(APIView):
     def get(self, request, level):
-        groups = Professor_Student.objects.filter(group__professor__user=request.user, group__level=level).values(
+        groups = Professor_Student.objects.filter(professor__user=request.user, group__level=level).values(
             'group__name', 'group__created_at', 'group__id').annotate(student_count=Count('student'))
         serializer = GetGroupDataSerailizer(groups, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+
+class AddGroupView(APIView):
     def post(self, request):
-        try:
-            name = request.data.pop('name')
-            professor = Professor.objects.get(user=request.user)
-            group = Group.objects.create(name=name, professor=professor)
-            group.save()
-            return Response('Group is created successfully', status=status.HTTP_200_OK)
-        except:
-            return Response('Error, please try again', status=status.HTTP_400_BAD_REQUEST)
+        serializer = AddGroupSerilizer(
+            data=request.data, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GroupDetailsView(APIView):
@@ -84,4 +84,3 @@ class GetProfessorStudentView(APIView):
 
 # class AcceptStudentsRequests(APIView):
 #     def post(self, request):
-        

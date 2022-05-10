@@ -1,10 +1,11 @@
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import Professor, Request, Student, Professor_Level, User
+from .models import Professor, Professor_Student, Request, Student, Professor_Level, User
 from .serializers import StudentCreateSerializer, GetAllProfessorsSerializer, StudentProfileSerializer, StudentRequestSerializer
 from django.shortcuts import get_object_or_404
 from django.http import Http404
+from django.db.models import Value, Case, When, CharField
 
 
 class StudentCreateView(APIView):
@@ -17,11 +18,12 @@ class StudentCreateView(APIView):
 
 class GetAllProfessorView(APIView):
     def get(self, request):
-        student = Student.objects.get(user=request.user)
-        professors = Professor_Level.objects.select_related('professor').filter(level=student.level).values(
-            'professor__user__id', 'professor__user__first_name', 'professor__user__last_name', 'professor__avatar')
-        serializer = GetAllProfessorsSerializer(professors, many=True)
-
+        student = Student.objects.get(user=request.user)        
+        my_professors = Professor_Student.objects.filter(
+            student__user=request.user).values('professor')
+        professors = Professor_Level.objects.select_related('professor').filter(level=student.level).exclude(professor__in=my_professors).values(
+            'professor', 'professor__user__first_name', 'professor__user__last_name', 'professor__avatar')
+        serializer = GetAllProfessorsSerializer(professors, many=True, context={'request':request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
