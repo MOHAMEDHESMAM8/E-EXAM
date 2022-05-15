@@ -1,5 +1,5 @@
 from requests import request
-from .models import User, Student, Professor
+from .models import Professor_Student, User, Student, Professor
 from django.dispatch import receiver
 from django.db.models.signals import post_save, pre_save
 
@@ -25,3 +25,4 @@ def create_student_profile(sender, instance, **kwargs):
     user = User.objects.get(id=instance.user_id)
     if user.role == 'P':
         raise ValueError("Add Student Error")
+

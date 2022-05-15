@@ -1,10 +1,8 @@
 from dataclasses import fields
-from importlib.util import source_from_cache
-from pyexpat import model
 from djoser.serializers import UserSerializer as BaseUserSerializer, UserCreateSerializer as BaseUserCreateSerializer
 from rest_framework import serializers
-from .models import Group, User, Student, Professor, Request
-from drf_writable_nested import WritableNestedModelSerializer
+from .models import Group, Professor_Student, User, Student, Professor, Request, Chapter
+from django.contrib.auth.hashers import make_password, check_password
 
 
 class UserCreateSerializer(BaseUserCreateSerializer):
@@ -23,6 +21,7 @@ class StudentCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user_data = validated_data.pop('user')
         level = validated_data.pop('level')
+        user_data['password'] = make_password(user_data['password'])
         user = User.objects.create(**user_data)
         student = Student.objects.get(user=user)
         student.level = level
@@ -143,3 +142,43 @@ class GetProfessorStudentsSerializer(serializers.Serializer):
     phone = serializers.CharField(
         max_length=255, source='student__user__phone')
     group = serializers.CharField(max_length=255, source='group__name')
+
+
+class ChapterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Chapter
+        fields = ['id', 'name', 'level']
+
+    def create(self, validated_data):
+        chapter = Chapter()
+        chapter.name = validated_data.pop('name')
+        chapter.level = validated_data.pop('level')
+        chapter.professor = self.context['request']
+        chapter.save()
+        return chapter
+
+
+class AcceptStudentRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Professor_Student
+        fields = ['group']
+
+    def create(self, validated_data, **kwargs):
+        students = self.context['request'].data['students']
+        group = validated_data.pop('group')
+        for obj in students:
+            professor = self.context['request'].user.professor
+            student = Student.objects.get(pk=obj)
+            student_group = Professor_Student()
+            student_group.group = group
+            student_group.professor = professor
+            student_group.student = student
+            request = Request.objects.get(student=student, professor=professor)
+            request.delete()
+            student_group.save()
+        return student_group
+
+
+class GetLevelGroupSerializer(serializers.Serializer):
+    id = serializers.CharField(max_length=255)
+    name = serializers.CharField(max_length=255)

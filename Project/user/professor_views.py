@@ -1,15 +1,22 @@
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import Group, Professor, Professor_Student, Request, Student
-from .serializers import GetStudentRequestSerializer, GetGroupDataSerailizer, GroupDetailSerializer, GetGroupNameSerializer, GetProfessorStudentsSerializer, AddGroupSerilizer
+from .models import Chapter, Group, Professor_Student, Request
+from .serializers import GetStudentRequestSerializer, GetGroupDataSerailizer, GroupDetailSerializer, ChapterSerializer, GetGroupNameSerializer, GetProfessorStudentsSerializer, AddGroupSerilizer, AcceptStudentRequestSerializer, GetLevelGroupSerializer
 from django.db.models import Count
 from django.http import Http404
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class GetProfessorGroupsView(APIView):
     def get(self, request, level):
-        groups = Professor_Student.objects.filter(professor__user=request.user, group__level=level).values(
+        LEVEL_CHOICES = {
+            1: 'F',
+            2: 'S',
+            3: 'T',
+        }
+        groups = Professor_Student.objects.filter(professor__user=request.user, group__level=LEVEL_CHOICES[level]).values(
             'group__name', 'group__created_at', 'group__id').annotate(student_count=Count('student'))
         serializer = GetGroupDataSerailizer(groups, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -70,10 +77,9 @@ class GetStudentsRequestView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-# class AddStudentToGroupView(APIView):
-#     def post(self, request):
+class GetProfessorStudentsView(APIView):
+    permission_classes = [IsAuthenticated]
 
-class GetProfessorStudentView(APIView):
     def get(self, request):
         groups = Group.objects.filter(
             professor__user=request.user).values('id')
@@ -82,5 +88,85 @@ class GetProfessorStudentView(APIView):
         serializer = GetProfessorStudentsSerializer(students, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-# class AcceptStudentsRequests(APIView):
-#     def post(self, request):
+
+class AcceptStudentsRequestsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = AcceptStudentRequestSerializer(
+            data=request.data, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class RejectStudentRequestView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        if all(isinstance(x, int) for x in request.data):
+            for student in request.data:
+                student_request = Request.objects.get(
+                    student=student, professor=request.user.professor)
+                student_request.delete()
+            return Response("Student Request is Rejected", status=status.HTTP_200_OK)
+        return Response("Error, please try again", status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetLevelGroupView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, level):
+        LEVEL_CHOICES = {
+            1: 'F',
+            2: 'S',
+            3: 'T',
+        }
+        groups = Group.objects.filter(
+            level=LEVEL_CHOICES[level], professor=request.user.professor)
+        serializer = GetLevelGroupSerializer(groups, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class GetProfessorChapterView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, level):
+        LEVEL_CHOICES = {
+            1: 'F',
+            2: 'S',
+            3: 'T',
+        }
+        chapters = Chapter.objects.filter(
+            professor=request.user.professor, level=LEVEL_CHOICES[level])
+        serializer = GetLevelGroupSerializer(chapters, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class AddChapterView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        chapters = Chapter.objects.filter(professor=request.user.professor)
+        serializer = ChapterSerializer(chapters, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = ChapterSerializer(data=request.data, context={
+            'request': request.user.professor})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            refresh_token = request.data["refresh_token"]
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response(status=status.HTTP_205_RESET_CONTENT)
+        except Exception as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST)

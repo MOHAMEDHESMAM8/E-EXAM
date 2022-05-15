@@ -134,15 +134,6 @@ class Student(models.Model):
 
 
 class Group(models.Model):
-    LEVEL_ONE = '1'
-    LEVEL_TWO = '2'
-    LEVEL_THREE = '3'
-
-    LEVEL_CHOICES = [
-        (LEVEL_ONE, 'One'),
-        (LEVEL_TWO, 'Two'),
-        (LEVEL_THREE, 'Three'),
-    ]
     name = models.CharField(max_length=100)
     professor = models.ForeignKey(
         Professor, on_delete=models.CASCADE, related_name='group')

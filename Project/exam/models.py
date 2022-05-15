@@ -1,6 +1,5 @@
 from django.db import models
-from question_bank.models import Chapter
-from user.models import Professor, Student
+from user.models import Professor, Student, Chapter
 
 
 class Exam(models.Model):
@@ -13,13 +12,16 @@ class Exam(models.Model):
         (LEVEL_TWO, 'Two'),
         (LEVEL_THREE, 'Three'),
     ]
-    professor = models.ForeignKey(Professor, on_delete=models.CASCADE, related_name='exam')
+    professor = models.ForeignKey(
+        Professor, on_delete=models.CASCADE, related_name='exam')
     name = models.CharField(max_length=100)
-    level = models.CharField(max_length=1, choices=LEVEL_CHOICES, default=LEVEL_TWO)
+    level = models.CharField(
+        max_length=1, choices=LEVEL_CHOICES, default=LEVEL_TWO)
     total = models.PositiveSmallIntegerField()
     time = models.TimeField()
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE)
 
 
 class ExamOptions(models.Model):
@@ -32,15 +34,27 @@ class ExamOptions(models.Model):
         (medium_level, 'Medium'),
         (hard_level, 'Hard'),
     ]
-    exam = models.ForeignKey(Exam, on_delete=models.CASCADE, related_name='exam_options')
+    exam = models.ForeignKey(
+        Exam, on_delete=models.CASCADE, related_name='exam_options')
     chapter = models.ForeignKey(Chapter, on_delete=models.PROTECT)
     count = models.PositiveSmallIntegerField()
-    difficulty = models.CharField(max_length=1, choices=difficulty_CHOICES, default=medium_level)
+    difficulty = models.CharField(
+        max_length=1, choices=difficulty_CHOICES, default=medium_level)
     updated_at = models.DateTimeField(auto_now=True)
 
 
 class result(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='result')
-    exam = models.ForeignKey(Exam, on_delete=models.CASCADE, related_name='result')
+    student = models.ForeignKey(
+        Student, on_delete=models.CASCADE, related_name='result')
+    exam = models.ForeignKey(
+        Exam, on_delete=models.CASCADE, related_name='result')
     result = models.PositiveSmallIntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
+
+
+class ExamGroups(models.Model):
+    exam = models.ForeignKey(Exam, on_delete=models.CASCADE)
+    group = models.ForeignKey(Professor, on_delete=models.PROTECT)
+    start_at = models.DateTimeField()
+    end_at = models.DateTimeField()
+    created_at = models.DateField(auto_now_add=True)

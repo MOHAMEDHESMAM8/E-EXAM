@@ -23,7 +23,7 @@ urlpatterns = [
     path('api/auth/', include('djoser.urls')),
     path('api/auth/', include('djoser.urls.jwt')),
     path('api/user/', include('user.urls')),
-    # path('api/exam/', include('exam.urls')),
-    # path('api/question_bank/', include('question_bank.urls')),
+    path('api/exam/', include('exam.urls')),
+    path('api/question_bank/', include('question_bank.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

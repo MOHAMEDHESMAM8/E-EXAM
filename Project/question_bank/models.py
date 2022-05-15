@@ -1,6 +1,5 @@
 from django.db import models
-
-from user.models import  Chapter
+from user.models import  Chapter, Professor
 
 
 
@@ -15,7 +14,8 @@ class Question(models.Model):
         (hard_level, 'Hard'),
     ]
 
-    Chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE)
+    chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE)
+    professor = models.ForeignKey(Professor, on_delete=models.CASCADE)
     text = models.TextField()
     degree = models.PositiveSmallIntegerField()
     difficulty = models.CharField(max_length=1, choices=difficulty_CHOICES, default=medium_level)
@@ -27,7 +27,7 @@ class Question(models.Model):
     avatar = models.ImageField(upload_to='questions', null=True, blank=True)
 
 
-class answer(models.Model):
+class Answer(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='answer')
     answer = models.CharField(max_length=255)
     is_correct = models.BooleanField(default=False)
