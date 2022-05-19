@@ -14,6 +14,7 @@ pillow = "*"
 drf-writable-nested = "*"
 gunicorn = "*"
 dj-database-url = "*"
+psycopg2 = "*"
 
 [dev-packages]
 autopep8 = "*"
