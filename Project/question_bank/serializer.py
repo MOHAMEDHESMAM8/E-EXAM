@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from .models import Answer, Question
-from drf_writable_nested import WritableNestedModelSerializer
 
 
 class AnswerSerializer(serializers.ModelSerializer):

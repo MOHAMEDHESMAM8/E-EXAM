@@ -1,3 +1,4 @@
+from requests import delete, request
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -52,3 +53,10 @@ class QuestionDetialsView(APIView):
         question.delete()
         return Response("Question is deleted", status=status.HTTP_200_OK)
 
+class DeleteQuestionsView(APIView):
+    def delete(self, request):
+        if all(isinstance(x, int) for x in request.data):
+            questions = Question.objects.filter(id__in=request.data).delete()
+            return Response('Questions are deleted', status=status.HTTP_200_OK)
+        return Response('Error, please try again', status=status.HTTP_400_BAD_REQUEST)
+    

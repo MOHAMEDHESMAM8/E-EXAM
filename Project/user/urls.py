@@ -1,6 +1,6 @@
 from django.urls import path
 from .student_views import StudentCreateView, GetAllProfessorView, StudentRequestView, StudentProfileView
-from .professor_views import GetProfessorGroupsView, AddChapterView, GetStudentsRequestView, GroupDetailsView, GetStudentsOfGroupView, GetProfessorStudentsView, AddGroupView, AcceptStudentsRequestsView, RejectStudentRequestView, GetLevelGroupView, GetProfessorChapterView, LogoutView
+from .professor_views import GetProfessorGroupsView, AddChapterView, GetStudentsRequestView, GroupDetailsView, GetStudentsOfGroupView, GetProfessorStudentsView, AddGroupView, AcceptStudentsRequestsView,  RejectStudentRequestView, GetLevelGroupView, GetProfessorChapterView, LogoutView
 
 urlpatterns = [
     # Student URLs
