@@ -11,10 +11,8 @@ SECRET_KEY = 'django-insecure-k2^y)aq!)o))6+@-!n7zyk-x%qqn-%y@^uwa*$vd6*67qh(f2&
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "www.ee-exam.herokuapp.com/",
-    "ee-exam.herokuapp.com/",
-    "https://ee-exam.herokuapp.com/",
-    '127.0.0.1'
+    '127.0.0.1',
+    'ee-exam.herokuapp.com'
 ]
 
 
