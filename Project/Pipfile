@@ -12,6 +12,7 @@ djoser = "*"
 djangorestframework-simplejwt = "*"
 pillow = "*"
 drf-writable-nested = "*"
+gunicorn = "*"
 
 [dev-packages]
 autopep8 = "*"
