@@ -13,6 +13,7 @@ djangorestframework-simplejwt = "*"
 pillow = "*"
 drf-writable-nested = "*"
 gunicorn = "*"
+dj-database-url = "*"
 
 [dev-packages]
 autopep8 = "*"
