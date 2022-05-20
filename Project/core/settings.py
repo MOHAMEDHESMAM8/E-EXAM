@@ -78,7 +78,9 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # }
 
 import dj_database_url
-DATABASES['default'] = dj_database_url.config(conn_max_age=600)
+DATABASES = {
+    'default' : dj_database_url.config(conn_max_age=600)
+}
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
