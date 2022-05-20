@@ -12,7 +12,7 @@ class ExamSerializers(serializers.Serializer):
 
 class ChaptersSerializers(serializers.Serializer):
     name = serializers.CharField(max_length=100)
-    exam = ExamSerializers(many=True, read_only=True)
+    exam = ExamSerializers(many=True)
 
 
 class ExamOptionsSerializer(serializers.ModelSerializer):
@@ -83,3 +83,20 @@ class StudentExamSerializers(serializers.ModelSerializer):
         for key, val in group_data[0].items():
             data.update({key: val})
         return data
+
+
+class AddExamToGroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ExamGroups
+        fields = ['exam', 'start_at', 'end_at']
+
+    def create(self, validated_data):
+        exam_groups = validated_data.pop('groups')
+        for obj in exam_groups:
+            exam = ExamGroups()
+            exam.exam_id = validated_data.pop('exam')
+            exam.start_at = validated_data.pop('start_at')
+            exam.end_at = validated_data.pop('end_at')
+            exam.group_id = obj
+            exam.save()
+        return exam

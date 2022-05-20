@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from .serializer import AddQuestionSerializer, GetQuestionSerializer
 from .models import Question
 from django.http import Http404
+from django.db.models import F,Value
 
 
 class AddQuestionView(APIView):
@@ -25,6 +26,8 @@ class GetQuestionView(APIView):
         }
         questions = Question.objects.filter(
             professor=request.user.professor, chapter__level=LEVEL_CHOICES[level])
+        print(questions)
+
         serializer = GetQuestionSerializer(questions, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

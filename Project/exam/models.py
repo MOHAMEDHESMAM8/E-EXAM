@@ -21,7 +21,7 @@ class Exam(models.Model):
     time = models.TimeField()
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE)
+    chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE, related_name='exam')
 
 
 class ExamOptions(models.Model):

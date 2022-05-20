@@ -14,7 +14,7 @@ class AddQuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
         fields = ['id', 'chapter', 'text', 'degree', 'difficulty',
-                  'is_true_false', 'is_multiple', 'in_practice', 'answer']
+                    'is_true_false', 'in_practice', 'answer']
 
     def create(self, validated_data):
         answers = validated_data.pop('answer')
@@ -25,7 +25,6 @@ class AddQuestionSerializer(serializers.ModelSerializer):
         question.difficulty = validated_data.pop('difficulty')
         question.degree = validated_data.pop('degree')
         question.is_true_false = validated_data.pop('is_true_false')
-        question.is_multiple = validated_data.pop('is_multiple')
         question.in_practice = validated_data.pop('in_practice')
         question.save()
         for obj in answers:
@@ -65,3 +64,5 @@ class GetQuestionSerializer(serializers.Serializer):
     text = serializers.CharField(max_length=255)
     difficulty = serializers.CharField(max_length=10)
     degree = serializers.IntegerField()
+    chapter = serializers.CharField(max_length=255, source="chapter_id")
+    
