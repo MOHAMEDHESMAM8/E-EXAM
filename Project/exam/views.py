@@ -7,7 +7,8 @@ from question_bank.models import Question, Answer
 
 class StudentGetExamView(APIView):
   def get(self, request, exam_id):
-    exam_option  = ExamOptions.objects.filter(exam_id=exam_id).values('id', 'chapter', 'difficulty', 'count')
+    exam_option  = ExamOptions.objects.select_related('exam').filter(exam_id=exam_id).values('id', 'chapter', 'difficulty', 'count', 'exam__level')
     for obj in exam_option:
-      exam = Question.objects.filter()
+      # exam = Question.objects.filter()
+      print(obj)
     return Response('Tmm',status=status.HTTP_200_OK)

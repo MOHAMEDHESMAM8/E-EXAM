@@ -14,12 +14,22 @@ class Question(models.Model):
         (hard_level, 'Hard'),
     ]
 
+    LEVEL_ONE = 'F'
+    LEVEL_TWO = 'S'
+    LEVEL_THREE = 'T'
+
+    LEVEL_CHOICES = [
+        (LEVEL_ONE, 'One'),
+        (LEVEL_TWO, 'Two'),
+        (LEVEL_THREE, 'Three'),
+    ]
+    level = models.CharField(
+        max_length=1, choices=LEVEL_CHOICES, default=LEVEL_TWO)
     chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE)
     professor = models.ForeignKey(Professor, on_delete=models.CASCADE)
     text = models.TextField()
     degree = models.PositiveSmallIntegerField()
     difficulty = models.CharField(max_length=1, choices=difficulty_CHOICES, default=medium_level)
-    is_multiple = models.BooleanField(default=False)
     is_true_false = models.BooleanField(default=False)
     in_practice = models.BooleanField(default=True)
     created_at = models.DateField(auto_now_add=True)
