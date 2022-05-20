@@ -41,7 +41,7 @@ class GetCreateExamSerializers(serializers.ModelSerializer):
         exam.name = validated_data.pop('name')
         exam.time = validated_data.pop('time')
         exam.professor = self.context['request'].user.professor
-        exam.chapter = validated_data.pop('chapter')
+        exam.chapter_id = validated_data.pop('chapter')
         exam.level = validated_data.pop('level')
         exam.total = count_total_questions(exam_options)
         exam.save()
@@ -49,37 +49,37 @@ class GetCreateExamSerializers(serializers.ModelSerializer):
             new_obj = ExamOptions()
             new_obj.count = obj.pop('count')
             new_obj.difficulty = obj.pop('difficulty')
-            new_obj.chapter = obj.pop('chapter')
+            new_obj.chapter_id = obj.pop('chapter')
             new_obj.exam = exam
             new_obj.save()
         return exam
 
 
-# class StudentChaptersSerializers(serializers.ModelSerializer):
-#     class Meta:
-#         model = Chapter
-#         fields = ['name']
+class StudentChaptersSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Chapter
+        fields = ['name']
 
 
-# class StudentExamGroupsSerializers(serializers.ModelSerializer):
-#     class Meta:
-#         model = ExamGroups
-#         fields = ['start_at', 'end_at']
+class StudentExamGroupsSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = ExamGroups
+        fields = ['start_at', 'end_at']
 
 
-# class StudentExamSerializers(serializers.ModelSerializer):
-#     exam_groups = StudentExamGroupsSerializers(source='filtered_group', many=True, read_only=True)
-#     chapter = StudentChaptersSerializers(read_only=True)
+class StudentExamSerializers(serializers.ModelSerializer):
+    exam_groups = StudentExamGroupsSerializers(source='filtered_group', many=True, read_only=True)
+    chapter = StudentChaptersSerializers(read_only=True)
 
-#     class Meta:
-#         model = Exam
-#         fields = ['name', 'total', 'chapter', 'time', 'exam_groups']
+    class Meta:
+        model = Exam
+        fields = ['name', 'total', 'chapter', 'time', 'exam_groups']
 
-#     def to_representation(self, instance):
-#         data = super(StudentExamSerializers, self).to_representation(instance)
-#         obj = data.pop('chapter')
-#         data['chapter_name'] = obj['name']
-#         group_data = data.pop('exam_groups')
-#         for key, val in group_data[0].items():
-#             data.update({key: val})
-#         return data
+    def to_representation(self, instance):
+        data = super(StudentExamSerializers, self).to_representation(instance)
+        obj = data.pop('chapter')
+        data['chapter_name'] = obj['name']
+        group_data = data.pop('exam_groups')
+        for key, val in group_data[0].items():
+            data.update({key: val})
+        return data

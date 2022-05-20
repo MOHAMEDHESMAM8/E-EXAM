@@ -42,25 +42,25 @@ class CreateExam(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# class GetExam(APIView):
-#     permission_classes = [IsAuthenticated]
+class GetExam(APIView):
+    permission_classes = [IsAuthenticated]
 
-#     def get(self, request, exam):
-#         exam_obj = Exam.objects.get(pk=exam)
-#         serializer = GetCreateExamSerializers(exam_obj)
-#         return Response(serializer.data, status=status.HTTP_200_OK)
+    def get(self, request, exam):
+        exam_obj = Exam.objects.get(pk=exam)
+        serializer = GetCreateExamSerializers(exam_obj)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-# # if level == 1:
-# #     data = Chapter.objects.prefetch_related(
-# #         Prefetch('exam', queryset=Exam.objects.filter(level="F"), to_attr='filtered_exam')
-# #     ).filter(professor=1)
-# # elif level == 2:
-# #     data = Chapter.objects.prefetch_related(
-# #         Prefetch('exam', queryset=Exam.objects.filter(level="S"), to_attr='filtered_exam')
-# #     ).filter(professor=1)
-# # elif level == 3:
-# #     data = Chapter.objects.prefetch_related(
-# #         Prefetch('exam', queryset=Exam.objects.filter(level="T"), to_attr='filtered_exam')
-# #     ).filter(professor=1)
-# # else:
-# #     Response({"level number didn't exists"}, status=status.HTTP_400_BAD_REQUEST)
+# if level == 1:
+#     data = Chapter.objects.prefetch_related(
+#         Prefetch('exam', queryset=Exam.objects.filter(level="F"), to_attr='filtered_exam')
+#     ).filter(professor=1)
+# elif level == 2:
+#     data = Chapter.objects.prefetch_related(
+#         Prefetch('exam', queryset=Exam.objects.filter(level="S"), to_attr='filtered_exam')
+#     ).filter(professor=1)
+# elif level == 3:
+#     data = Chapter.objects.prefetch_related(
+#         Prefetch('exam', queryset=Exam.objects.filter(level="T"), to_attr='filtered_exam')
+#     ).filter(professor=1)
+# else:
+#     Response({"level number didn't exists"}, status=status.HTTP_400_BAD_REQUEST)
