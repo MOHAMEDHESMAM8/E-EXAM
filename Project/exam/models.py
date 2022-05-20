@@ -1,3 +1,4 @@
+from enum import unique
 from django.db import models
 from user.models import Professor, Student, Chapter
 
@@ -58,3 +59,6 @@ class ExamGroups(models.Model):
     start_at = models.DateTimeField()
     end_at = models.DateTimeField()
     created_at = models.DateField(auto_now_add=True)
+
+    class Meta:
+        unique_together=['exam', 'group']

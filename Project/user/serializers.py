@@ -29,6 +29,14 @@ class StudentCreateSerializer(serializers.ModelSerializer):
         return student
 
 
+class GetMyProfessorsSerializer(serializers.Serializer):
+    id = serializers.IntegerField(source='professor')
+    first_name = serializers.CharField(
+        max_length=255, source='professor__user__first_name')
+    last_name = serializers.CharField(
+        max_length=255, source='professor__user__last_name')
+    avatar = serializers.CharField(max_length=255, source='professor__avatar')
+
 class GetAllProfessorsSerializer(serializers.Serializer):
     id = serializers.IntegerField(source='professor')
     first_name = serializers.CharField(
@@ -163,20 +171,16 @@ class AcceptStudentRequestSerializer(serializers.ModelSerializer):
         model = Professor_Student
         fields = ['group']
 
-    def create(self, validated_data, **kwargs):
+    def create(self, validated_data):
         students = self.context['request'].data['students']
         group = validated_data.pop('group')
         for obj in students:
             professor = self.context['request'].user.professor
-            student = Student.objects.get(pk=obj)
-            student_group = Professor_Student()
-            student_group.group = group
-            student_group.professor = professor
-            student_group.student = student
-            request = Request.objects.get(student=student, professor=professor)
+            student_group = Professor_Student.objects.create(student_id=obj, professor=professor, group_id=group.id)
+            request = Request.objects.get(student_id=obj, professor=professor)
             request.delete()
-            student_group.save()
         return student_group
+    
 
 
 class GetLevelGroupSerializer(serializers.Serializer):

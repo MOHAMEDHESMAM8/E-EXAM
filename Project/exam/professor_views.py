@@ -55,4 +55,4 @@ class AddExamToGroupView(APIView):
         serializer = AddExamToGroupSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.create(validated_data=request.data)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response("Exam is Added to Group", status=status.HTTP_200_OK)

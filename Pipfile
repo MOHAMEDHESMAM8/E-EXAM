@@ -54,6 +54,7 @@ PyJWT = "==2.4.0"
 PyPrind = "==2.11.3"
 pySmartDL = "==1.3.4"
 whitenoise = "*"
+django-cors-headers = "*"
 
 [dev-packages]
 

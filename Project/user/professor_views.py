@@ -1,3 +1,4 @@
+from django.forms import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.views import APIView
@@ -99,6 +100,31 @@ class AcceptStudentsRequestsView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ChangeStudentGroupView(APIView):
+    def get_object(self, student_id):
+        try:
+            return Professor_Student.objects.get(student=student_id)
+        except Professor_Student.DoesNotExist:
+            raise Http404
+    
+    def validate_ids(self, id_list):
+        for id in id_list:
+            try:
+                Professor_Student.objects.get(id=id)
+            except (Professor_Student.DoesNotExist, ValidationError):
+                return Response("Error, please try again", status=status.HTTP_400_BAD_REQUEST)
+        return True
+    def put(self,request):
+        students = request.data['students']
+        self.validate_ids(id_list=students)
+        for student in students:
+            obj = self.get_object(student)
+            obj.group_id = request.data['group']
+            obj.save()
+        return Response("The Student Group is changed", status=status.HTTP_200_OK)
+
 
 
 class RejectStudentRequestView(APIView):

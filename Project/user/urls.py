@@ -1,6 +1,6 @@
 from django.urls import path
-from .student_views import StudentCreateView, GetAllProfessorView, StudentRequestView, StudentProfileView
-from .professor_views import GetProfessorGroupsView, AddChapterView, GetStudentsRequestView, GroupDetailsView, GetStudentsOfGroupView, GetProfessorStudentsView, AddGroupView, AcceptStudentsRequestsView,  RejectStudentRequestView, GetLevelGroupView, GetProfessorChapterView, LogoutView
+from .student_views import StudentCreateView, GetAllProfessorView, StudentRequestView, StudentProfileView, GetStudentProfessorView
+from .professor_views import GetProfessorGroupsView, ChangeStudentGroupView, AddChapterView, GetStudentsRequestView, GroupDetailsView, GetStudentsOfGroupView, GetProfessorStudentsView, AddGroupView, AcceptStudentsRequestsView,  RejectStudentRequestView, GetLevelGroupView, GetProfessorChapterView, LogoutView
 
 urlpatterns = [
     # Student URLs
@@ -8,6 +8,8 @@ urlpatterns = [
     path('get_professors/', GetAllProfessorView.as_view(), name='get_professors'),
     path('student_request/', StudentRequestView.as_view(), name='student_request'),
     path('student_profile/', StudentProfileView.as_view(), name='student_profile'),
+    path('logout/', LogoutView.as_view()),
+    path('student_professors/', GetStudentProfessorView.as_view(), name='student_professors'),
 
     # Professor URLs
     # Levels are F,S,T
@@ -22,6 +24,6 @@ urlpatterns = [
     path('level_groups/<int:level>/', GetLevelGroupView.as_view()),
     path('level_chapters/<int:level>/', GetProfessorChapterView.as_view()),
     path('chapter/', AddChapterView.as_view(), name='chapter'),
-    path('logout/', LogoutView.as_view()),
+    path('change_student_group/', ChangeStudentGroupView.as_view(), name='change_student_group/'),
 
 ]
