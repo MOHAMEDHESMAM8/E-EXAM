@@ -80,11 +80,15 @@ class GetStudentsRequestView(APIView):
 
 class GetProfessorStudentsView(APIView):
     permission_classes = [IsAuthenticated]
-
-    def get(self, request):
+    def get(self, request, level):
+        LEVEL_CHOICES = {
+            1: 'F',
+            2: 'S',
+            3: 'T',
+        }
         groups = Group.objects.filter(
             professor__user=request.user).values('id')
-        students = Professor_Student.objects.select_related('students').filter(group__in=groups).values(
+        students = Professor_Student.objects.select_related('students').filter(group__in=groups,level = LEVEL_CHOICES[level]).values(
             'student', 'student__user__email', 'student__user__first_name', 'student__user__last_name', 'student__user__phone', 'group__name')
         serializer = GetProfessorStudentsSerializer(students, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
