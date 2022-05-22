@@ -112,22 +112,29 @@ class Student(models.Model):
     level = models.CharField(
         max_length=1, choices=LEVEL_CHOICES, default=LEVEL_TWO)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    score =models.IntegerField(validators=[MinValueValidator(0)], default= 0)
 
     def __str__(self):
         return f'{self.user.first_name} {self.user.last_name}'
-
     def first_name(self):
         return self.user.first_name
-
     def last_name(self):
         return self.user.last_name
-
     def phone(self):
         return self.user.phone
-
     @admin.display(ordering='user__email')
     def email(self):
         return self.user.email
+        
+    @property
+    def rank(self, value):
+        if self.score is None:
+            return 0
+        else:
+            return self.score
+    @rank.setter
+    def rank(self, value):
+        self.score += value
 
     class Meta:
         ordering = ['user__email']
@@ -149,7 +156,7 @@ class Group(models.Model):
 
 
 class Professor_Student(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE,related_name='professor_student')
     group = models.ForeignKey(Group, on_delete=models.PROTECT)
     professor = models.ForeignKey(Professor, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)

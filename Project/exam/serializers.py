@@ -29,11 +29,11 @@ def count_total_questions(exam_options):
 
 
 class GetCreateExamSerializers(serializers.ModelSerializer):
-    exam_options = ExamOptionsSerializer(many=True, read_only=True)
+    exam_options = ExamOptionsSerializer(many=True)
 
     class Meta:
         model = Exam
-        fields = ['name', 'time', 'chapter', 'exam_options']
+        fields = ['id','name', 'time', 'chapter', 'exam_options']
 
     def create(self, validated_data, **kwargs):
         exam_options = validated_data.pop('exam_options')
@@ -53,7 +53,25 @@ class GetCreateExamSerializers(serializers.ModelSerializer):
             new_obj.exam = exam
             new_obj.save()
         return exam
-
+        
+    def update(self, instance, validated_data):
+        exam_option = validated_data.pop('exam_options')
+        options = (instance.exam_options).all()
+        options = list(options)
+        
+        instance.name = validated_data.get('name', instance.name)
+        instance.time = validated_data.get('time', instance.time)
+        instance.chapter_id = validated_data.get('chapter', instance.chapter)
+        instance.level = validated_data.get('level', instance.level)
+        instance.total = count_total_questions(exam_option)
+        instance.save()
+        for obj in exam_option:
+            new_obj = options.pop(0)
+            new_obj.count = obj.get('count', new_obj.count)
+            new_obj.difficulty = obj.get('difficulty', new_obj.difficulty)
+            new_obj.chapter_id = obj.get('chapter', new_obj.chapter_id)
+            new_obj.save()
+        return instance
 
 class StudentChaptersSerializers(serializers.ModelSerializer):
     class Meta:
@@ -95,3 +113,30 @@ class AddExamToGroupSerializer(serializers.ModelSerializer):
         for obj in exam_groups:
             exam = ExamGroups.objects.create(group_id=obj, **validated_data)
         return exam
+
+class StudentAvailableExamSerializer(serializers.Serializer):
+    id=serializers.IntegerField(source='exam')
+    name=serializers.CharField(max_length=255, source='exam__name')
+    start_at = serializers.DateTimeField()
+    end_at = serializers.DateTimeField()
+    time = serializers.TimeField(source='exam__time')
+
+class StudentExamHistorySerializer(serializers.Serializer):
+    id=serializers.IntegerField(source='exam')
+    name = serializers.CharField(max_length=255, source='exam__name')
+    total_score = serializers.IntegerField(source='exam__total')
+    score = serializers.IntegerField(source='result')
+
+class ExamResultSerializer(serializers.Serializer):
+    student_phone = serializers.CharField(max_length=255, source='student__user__phone')
+    first_name = serializers.CharField(max_length=255, source='student__user__first_name')
+    last_name = serializers.CharField(max_length=255, source='student__user__last_name')
+    result = serializers.IntegerField()
+
+class StudentExamDetailsSerializer(serializers.Serializer):
+    id=serializers.IntegerField(source='exam')
+    name=serializers.CharField(max_length=255, source='exam__name')
+    start_at = serializers.DateTimeField()
+    end_at = serializers.DateTimeField()
+    time = serializers.TimeField(source='exam__time')
+    chapter = serializers.CharField(max_length=255, source='exam__chapter')

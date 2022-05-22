@@ -3,8 +3,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import Chapter, Group, Professor_Student, Request
-from .serializers import GetStudentRequestSerializer, GetGroupDataSerailizer, GroupDetailSerializer, ChapterSerializer, GetGroupNameSerializer, GetProfessorStudentsSerializer, AddGroupSerilizer, AcceptStudentRequestSerializer, GetLevelGroupSerializer
+from .models import Chapter, Group, Professor_Student, Request, Student
+from .serializers import GetStudentRequestSerializer, GetGroupDataSerailizer, GroupDetailSerializer,UserDataSerializer, ChapterSerializer, GetGroupNameSerializer, GetProfessorStudentsSerializer, AddGroupSerilizer, AcceptStudentRequestSerializer, GetLevelGroupSerializer
 from django.db.models import Count
 from django.http import Http404
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -196,3 +196,14 @@ class LogoutView(APIView):
             return Response(status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+class StudentRank(APIView):
+    def get(self, request,level):
+        LEVEL_CHOICES = {
+            1: 'F',
+            2: 'S',
+            3: 'T',
+        }
+        students = Student.objects.select_related('user').filter(level=LEVEL_CHOICES[level]).order_by('-score')[:3].values('user__first_name', 'user__last_name')
+        serializer = UserDataSerializer(students, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

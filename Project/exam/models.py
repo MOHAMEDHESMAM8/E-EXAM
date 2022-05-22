@@ -1,4 +1,5 @@
-from enum import unique
+from user.models import Group
+
 from django.db import models
 from user.models import Professor, Student, Chapter
 
@@ -44,7 +45,7 @@ class ExamOptions(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 
-class result(models.Model):
+class Result(models.Model):
     student = models.ForeignKey(
         Student, on_delete=models.CASCADE, related_name='result')
     exam = models.ForeignKey(
@@ -54,8 +55,8 @@ class result(models.Model):
 
 
 class ExamGroups(models.Model):
-    exam = models.ForeignKey(Exam, on_delete=models.CASCADE)
-    group = models.ForeignKey(Professor, on_delete=models.PROTECT)
+    exam = models.ForeignKey(Exam, on_delete=models.CASCADE,related_name='exam')
+    group = models.ForeignKey(Group, on_delete=models.PROTECT)
     start_at = models.DateTimeField()
     end_at = models.DateTimeField()
     created_at = models.DateField(auto_now_add=True)

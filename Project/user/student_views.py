@@ -60,3 +60,4 @@ class GetStudentProfessorView(APIView):
             .values('professor', 'professor__user__first_name', 'professor__user__last_name', 'professor__avatar')
         serializer = GetMyProfessorsSerializer(professors, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+

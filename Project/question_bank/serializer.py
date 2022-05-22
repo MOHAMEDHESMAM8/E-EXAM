@@ -18,15 +18,8 @@ class AddQuestionSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         answers = validated_data.pop('answer')
-        question = Question()
-        question.professor = self.context['request'].user.professor
-        question.text = validated_data.pop('text')
-        question.chapter = validated_data.pop('chapter')
-        question.difficulty = validated_data.pop('difficulty')
-        question.degree = validated_data.pop('degree')
-        question.is_true_false = validated_data.pop('is_true_false')
-        question.in_practice = validated_data.pop('in_practice')
-        question.save()
+        professor = self.context['request'].user.professor
+        question = Question.objects.create(professor=professor, **validated_data)
         for obj in answers:
             new_obj = Answer()
             new_obj.question = question
@@ -46,8 +39,6 @@ class AddQuestionSerializer(serializers.ModelSerializer):
         instance.degree = validated_data.get('degree', instance.degree)
         instance.is_true_false = validated_data.get(
             'is_true_false', instance.is_true_false)
-        instance.is_multiple = validated_data.get(
-            'is_multiple', instance.is_multiple)
         instance.in_practice = validated_data.get(
             'in_practice', instance.in_practice)
         instance.save()
@@ -65,4 +56,3 @@ class GetQuestionSerializer(serializers.Serializer):
     difficulty = serializers.CharField(max_length=10)
     degree = serializers.IntegerField()
     chapter = serializers.CharField(max_length=255, source="chapter_id")
-    

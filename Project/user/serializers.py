@@ -91,6 +91,9 @@ class StudentRequestSerializer(serializers.ModelSerializer):
         request.save()
         return request
 
+class UserDataSerializer(serializers.Serializer):
+    first_name = serializers.CharField(max_length=255, source='user__first_name')
+    last_name = serializers.CharField(max_length=255, source='user__last_name')
 
 # Professor Serializer
 

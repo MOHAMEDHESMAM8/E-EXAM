@@ -67,11 +67,15 @@ class StudentAdmin(admin.ModelAdmin):
 
 @admin.register(Group)
 class GroupAdmin(admin.ModelAdmin):
-    list_display = ['professor_name', 'name', 'level', 'created_at']
+    list_display = ['professor_name', 'name', 'level', 'student_number', 'created_at']
     list_per_page = 20
-    @admin.display(description='Professor name')
     def professor_name(self, object):
         return f'{object.professor.user.first_name} {object.professor.user.last_name}'
+
+    def student_number(self, object):
+        student_num = Professor_Student.objects.filter(group=object.id, professor=object.professor).count()
+        return student_num
+
 
 @admin.register(Professor_Student)
 class StudentGroupAdmin(admin.ModelAdmin):
@@ -84,7 +88,7 @@ class StudentGroupAdmin(admin.ModelAdmin):
         return f'{object.student.user.first_name} {object.student.user.last_name}'
     @admin.display(description='Professor name')
     def professor_name(self, object):
-        return f'{object.group.professor.user.first_name} {object.group.professor.user.last_name}'
+        return f'{object.professor.user.first_name} {object.professor.user.last_name}'
 
 @admin.register(Professor_Level)
 class ProfessorLevelAdmin(admin.ModelAdmin):
