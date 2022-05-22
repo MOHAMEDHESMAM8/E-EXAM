@@ -110,14 +110,6 @@ class GetStudentRequestSerializer(serializers.Serializer):
         max_length=255, source='student__user__phone')
 
 
-class GetGroupDataSerailizer(serializers.Serializer):
-    id = serializers.IntegerField(source='group__id')
-    students_count = serializers.IntegerField(source='student_count')
-    group_name = serializers.CharField(max_length=255, source='group__name')
-    created_at = serializers.CharField(
-        max_length=255, source='group__created_at')
-
-
 class GetGroupNameSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=255)
 

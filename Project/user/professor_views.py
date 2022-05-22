@@ -1,15 +1,13 @@
-from django.forms import ValidationError
+from django.forms import IntegerField, ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Chapter, Group, Professor_Student, Request, Student
-from .serializers import GetStudentRequestSerializer, GetGroupDataSerailizer, GroupDetailSerializer,UserDataSerializer, ChapterSerializer, GetGroupNameSerializer, GetProfessorStudentsSerializer, AddGroupSerilizer, AcceptStudentRequestSerializer, GetLevelGroupSerializer
-from django.db.models import Count, F, When, Case, Value
+from .serializers import GetStudentRequestSerializer, GroupDetailSerializer, UserDataSerializer, ChapterSerializer, GetGroupNameSerializer, GetProfessorStudentsSerializer, AddGroupSerilizer, AcceptStudentRequestSerializer, GetLevelGroupSerializer
 from django.http import Http404
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.db.models import IntegerField
-from django.db.models.functions import Coalesce
+
 class GetProfessorGroupsView(APIView):
     def get(self, request, level):
         LEVEL_CHOICES = {
@@ -17,10 +15,14 @@ class GetProfessorGroupsView(APIView):
             2: 'S',
             3: 'T',
         }
-        groups = Professor_Student.objects.filter(professor__user=request.user, group__level=LEVEL_CHOICES[level]).values(
-            'group__name', 'group__created_at', 'group__id').annotate(student_count=Coalesce(Count('student'), 0))
-        serializer = GetGroupDataSerailizer(groups, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        results = []
+        group = Group.objects.filter(professor=request.user.professor, level=LEVEL_CHOICES[level]).values('id','name', 'created_at')
+        for obj in group:
+            student = Professor_Student.objects.filter(professor=request.user.professor, group=obj['id']).count()
+            object ={'id':obj['id'], 'name':obj['name'], 'created_at':obj['created_at'], 'student_count':student}
+            results.append(object)
+        print(results)
+        return Response(results, status=status.HTTP_200_OK)
 
 
 class AddGroupView(APIView):
@@ -88,7 +90,7 @@ class GetProfessorStudentsView(APIView):
         }
         groups = Group.objects.filter(
             professor__user=request.user).values('id')
-        students = Professor_Student.objects.select_related('students').filter(group__in=groups,level = LEVEL_CHOICES[level]).values(
+        students = Professor_Student.objects.select_related('students').filter(group__in=groups,level =LEVEL_CHOICES[level]).values(
             'student', 'student__user__email', 'student__user__first_name', 'student__user__last_name', 'student__user__phone', 'group__name')
         serializer = GetProfessorStudentsSerializer(students, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
