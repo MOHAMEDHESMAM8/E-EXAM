@@ -37,6 +37,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+
     'django.middleware.security.SecurityMiddleware',
     "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -69,20 +70,20 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'e-exam',
-        'HOST': 'localhost',
-        'USER': 'root',
-        'PASSWORD': ''
-    }
-}
-
-# import dj_database_url
 # DATABASES = {
-#     'default' : dj_database_url.config(conn_max_age=600)
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'e-exam',
+#         'HOST': 'localhost',
+#         'USER': 'root',
+#         'PASSWORD': ''
+#     }
 # }
+
+import dj_database_url
+DATABASES = {
+    'default' : dj_database_url.config(conn_max_age=600)
+}
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
