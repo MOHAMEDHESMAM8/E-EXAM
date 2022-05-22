@@ -112,7 +112,7 @@ class Student(models.Model):
     level = models.CharField(
         max_length=1, choices=LEVEL_CHOICES, default=LEVEL_TWO)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    score =models.IntegerField(validators=[MinValueValidator(0)], default= 0)
+    score =models.IntegerField(validators=[MinValueValidator(0)], default= 0, null=True, blank=True)
 
     def __str__(self):
         return f'{self.user.first_name} {self.user.last_name}'

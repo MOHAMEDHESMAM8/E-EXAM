@@ -5,11 +5,11 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Chapter, Group, Professor_Student, Request, Student
 from .serializers import GetStudentRequestSerializer, GetGroupDataSerailizer, GroupDetailSerializer,UserDataSerializer, ChapterSerializer, GetGroupNameSerializer, GetProfessorStudentsSerializer, AddGroupSerilizer, AcceptStudentRequestSerializer, GetLevelGroupSerializer
-from django.db.models import Count
+from django.db.models import Count, F, When, Case, Value
 from django.http import Http404
 from rest_framework_simplejwt.tokens import RefreshToken
-
-
+from django.db.models import IntegerField
+from django.db.models.functions import Coalesce
 class GetProfessorGroupsView(APIView):
     def get(self, request, level):
         LEVEL_CHOICES = {
@@ -18,7 +18,7 @@ class GetProfessorGroupsView(APIView):
             3: 'T',
         }
         groups = Professor_Student.objects.filter(professor__user=request.user, group__level=LEVEL_CHOICES[level]).values(
-            'group__name', 'group__created_at', 'group__id').annotate(student_count=Count('student'))
+            'group__name', 'group__created_at', 'group__id').annotate(student_count=Coalesce(Count('student'), 0))
         serializer = GetGroupDataSerailizer(groups, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
