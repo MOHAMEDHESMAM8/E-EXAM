@@ -1,5 +1,4 @@
 from user.models import Group
-
 from django.db import models
 from user.models import Professor, Student, Chapter
 
