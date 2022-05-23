@@ -38,6 +38,7 @@ class CustomUserManager(BaseUserManager):
     def create_superuser(self, email, phone, password=None, **extra_fields):
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('is_staff', True)
+        
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Admin must have is_superuser=True.')
         if extra_fields.get('is_staff') is not True:
@@ -46,12 +47,10 @@ class CustomUserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    ADMIN = 'A'
     STUDENT = 'S'
     PROFESSOR = 'P'
 
     ROLE_CHOICES = [
-        (ADMIN, 'Admin'),
         (STUDENT, 'Student'),
         (PROFESSOR, 'Professor'),
     ]
@@ -66,7 +65,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     role = models.CharField(
-        max_length=10, choices=ROLE_CHOICES, default=STUDENT)
+        max_length=10, choices=ROLE_CHOICES, default=PROFESSOR)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

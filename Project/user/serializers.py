@@ -22,7 +22,7 @@ class StudentCreateSerializer(serializers.ModelSerializer):
         user_data = validated_data.pop('user')
         level = validated_data.pop('level')
         user_data['password'] = make_password(user_data['password'])
-        user = User.objects.create(**user_data)
+        user = User.objects.create(**user_data, role='S')
         student = Student.objects.get(user=user)
         student.level = level
         student.save()

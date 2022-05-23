@@ -25,7 +25,7 @@ class GetQuestionView(APIView):
             3: 'T',
         }
         questions = Question.objects.filter(
-            professor=request.user.professor, chapter__level=LEVEL_CHOICES[level])
+            professor=request.user.professor, level=LEVEL_CHOICES[level])
         serializer = GetQuestionSerializer(questions, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
