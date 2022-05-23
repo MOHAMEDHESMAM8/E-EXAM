@@ -31,24 +31,20 @@ def count_total_questions(exam_options):
 class AddExamToGroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExamGroups
-        fields = ['exam_id', 'start_at', 'end_at']
+        fields = ['group_id', 'start_at', 'end_at']
 
-    def create(self, validated_data):
-        exam_groups = validated_data.pop('groups')
-        for obj in exam_groups:
-            exam = ExamGroups.objects.create(group_id=obj, **validated_data)
-        return exam
 
 class GetCreateExamSerializers(serializers.ModelSerializer):
     exam_options = ExamOptionsSerializer(many=True)
+    exam_groups = AddExamToGroupSerializer(many=True)
 
     class Meta:
         model = Exam
-        fields = ['id','name', 'time', 'chapter', 'exam_options']
+        fields = ['id','name', 'time', 'chapter', 'exam_options','exam_groups']
 
     def create(self, validated_data, **kwargs):
         exam_options = validated_data.pop('exam_options')
-        exam_options = validated_data.pop('exam_groups')
+        exam_groups = validated_data.pop('exam_groups')
         exam = Exam()
         exam.name = validated_data.pop('name')
         exam.time = validated_data.pop('time')
@@ -64,7 +60,14 @@ class GetCreateExamSerializers(serializers.ModelSerializer):
             new_obj.chapter_id = obj.pop('chapter')
             new_obj.exam = exam
             new_obj.save()
-        # for obj in exam_groups:
+        for obj in exam_groups:
+            examgroup = ExamGroups()
+            examgroup.exam_id =exam.id
+            examgroup.group_id= obj.pop('group_id')
+            examgroup.start_at = obj.pop('start_at')
+            examgroup.end_at = obj.pop('end_at')
+            examgroup.save()
+
         return exam
         
     def update(self, instance, validated_data):
@@ -84,6 +87,7 @@ class GetCreateExamSerializers(serializers.ModelSerializer):
             new_obj.difficulty = obj.get('difficulty', new_obj.difficulty)
             new_obj.chapter_id = obj.get('chapter', new_obj.chapter_id)
             new_obj.save()
+        
         return instance
 
 class StudentChaptersSerializers(serializers.ModelSerializer):

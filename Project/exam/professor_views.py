@@ -23,12 +23,6 @@ class GetProfessorChapters(APIView):
         serializer = ChaptersSerializers(chapters, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-class AddExamToGroupView(APIView):
-    def post(self,request):
-        serializer = AddExamToGroupSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.create(validated_data=request.data)
-        return Response("Exam is Added to Group", status=status.HTTP_200_OK)
 
 
 
