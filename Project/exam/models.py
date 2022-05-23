@@ -20,7 +20,7 @@ class Exam(models.Model):
     level = models.CharField(
         max_length=1, choices=LEVEL_CHOICES, default=LEVEL_TWO)
     total = models.PositiveSmallIntegerField()
-    time = models.TimeField()
+    time = models.PositiveSmallIntegerField()
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE, related_name='exam')

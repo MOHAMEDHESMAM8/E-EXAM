@@ -6,11 +6,12 @@ from user.models import Chapter, Group
 class ExamSerializers(serializers.Serializer):
     name = serializers.CharField(max_length=100)
     total = serializers.IntegerField()
-    time = serializers.TimeField()
+    time = serializers.IntegerField()
     created_at = serializers.DateField()
 
 
 class ChaptersSerializers(serializers.Serializer):
+    id= serializers.IntegerField()
     name = serializers.CharField(max_length=100)
     exam = ExamSerializers(many=True)
 
@@ -27,6 +28,16 @@ def count_total_questions(exam_options):
         count += obj.get('count')
     return count
 
+class AddExamToGroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ExamGroups
+        fields = ['exam_id', 'start_at', 'end_at']
+
+    def create(self, validated_data):
+        exam_groups = validated_data.pop('groups')
+        for obj in exam_groups:
+            exam = ExamGroups.objects.create(group_id=obj, **validated_data)
+        return exam
 
 class GetCreateExamSerializers(serializers.ModelSerializer):
     exam_options = ExamOptionsSerializer(many=True)
@@ -37,6 +48,7 @@ class GetCreateExamSerializers(serializers.ModelSerializer):
 
     def create(self, validated_data, **kwargs):
         exam_options = validated_data.pop('exam_options')
+        exam_options = validated_data.pop('exam_groups')
         exam = Exam()
         exam.name = validated_data.pop('name')
         exam.time = validated_data.pop('time')
@@ -52,6 +64,7 @@ class GetCreateExamSerializers(serializers.ModelSerializer):
             new_obj.chapter_id = obj.pop('chapter')
             new_obj.exam = exam
             new_obj.save()
+        # for obj in exam_groups:
         return exam
         
     def update(self, instance, validated_data):
@@ -103,23 +116,14 @@ class StudentExamSerializers(serializers.ModelSerializer):
         return data
 
 
-class AddExamToGroupSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ExamGroups
-        fields = ['exam_id', 'start_at', 'end_at']
 
-    def create(self, validated_data):
-        exam_groups = validated_data.pop('groups')
-        for obj in exam_groups:
-            exam = ExamGroups.objects.create(group_id=obj, **validated_data)
-        return exam
 
 class StudentAvailableExamSerializer(serializers.Serializer):
     id=serializers.IntegerField(source='exam')
     name=serializers.CharField(max_length=255, source='exam__name')
     start_at = serializers.DateTimeField()
     end_at = serializers.DateTimeField()
-    time = serializers.TimeField(source='exam__time')
+    time = serializers.IntegerField(source='exam__time')
 
 class StudentExamHistorySerializer(serializers.Serializer):
     id=serializers.IntegerField(source='exam')
@@ -138,5 +142,5 @@ class StudentExamDetailsSerializer(serializers.Serializer):
     name=serializers.CharField(max_length=255, source='exam__name')
     start_at = serializers.DateTimeField()
     end_at = serializers.DateTimeField()
-    time = serializers.TimeField(source='exam__time')
+    time = serializers.IntegerField(source='exam__time')
     chapter = serializers.CharField(max_length=255, source='exam__chapter')

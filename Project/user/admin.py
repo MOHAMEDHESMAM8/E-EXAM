@@ -52,7 +52,7 @@ class ProfessorAdmin(admin.ModelAdmin):
 
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ['student_name', 'email', 'phone']
+    list_display = ['student_name', 'email', 'phone', 'level']
     list_display_links = ('student_name','email')
     list_per_page = 20
     list_select_related = ['user']
