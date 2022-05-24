@@ -35,7 +35,7 @@ class AddQuestionSerializer(serializers.ModelSerializer):
         answers = validated_data.pop('answer')
         question = Question()
         question.professor = self.context['request'].user.professor
-        question.chapter_id = validated_data.pop('chapter')
+        question.chapter = validated_data.pop('chapter')
         question.level = validated_data.pop('level')
         question.text = validated_data.pop('text')
         question.difficulty = validated_data.pop('difficulty')
@@ -71,12 +71,7 @@ class AddQuestionSerializer(serializers.ModelSerializer):
             answer.is_correct = obj.get('is_correct', answer.is_correct)
             answer.save()
         return instance
-    def to_representation(self, instance):
-        data = super(AddQuestionSerializer, self).to_representation(instance)
-        obj = data.pop('chapter')
-        data["chapter_id"] =obj.pop("id")
-        data["chapter_name"] =obj.pop("name")
-        return data
+
 
 class GetQuestionSerializer(serializers.Serializer):
     id = serializers.IntegerField()
