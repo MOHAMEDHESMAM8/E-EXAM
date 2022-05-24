@@ -73,8 +73,13 @@ class GetStudentsOfGroupView(APIView):
 
 
 class GetStudentsRequestView(APIView):
-    def get(self, request):
-        requests = Request.objects.select_related('student').filter(professor__user=request.user).values(
+    def get(self, request,level):
+        LEVEL_CHOICES = {
+            1: 'F',
+            2: 'S',
+            3: 'T',
+        }
+        requests = Request.objects.select_related('student').filter(professor__user=request.user,Student_level=LEVEL_CHOICES[level]).values(
             'student', 'student__user__email', 'student__user__first_name', 'student__user__last_name', 'student__user__phone')
         serializer = GetStudentRequestSerializer(requests, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

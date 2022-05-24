@@ -14,7 +14,7 @@ urlpatterns = [
     # Professor URLs
     # Levels are F,S,T
     path('professor_groups/<int:level>/', GetProfessorGroupsView.as_view()),
-    path('get_student_request/', GetStudentsRequestView.as_view()),
+    path('get_student_request/<int:level>/', GetStudentsRequestView.as_view()),
     path('group_details/<int:group_id>/', GroupDetailsView.as_view()),
     path('get_students_group/<int:group_id>/', GetStudentsOfGroupView.as_view()),
     path('professor_students/<int:level>/', GetProfessorStudentsView.as_view()),
