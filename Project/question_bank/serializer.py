@@ -19,7 +19,7 @@ class getQuestionSerializer(serializers.ModelSerializer):
         fields = ['id', 'chapter', 'level', 'text', 'degree', 'difficulty',
                     'is_true_false', 'in_practice', 'answer']
     def to_representation(self, instance):
-        data = super(AddQuestionSerializer, self).to_representation(instance)
+        data = super(getQuestionSerializer, self).to_representation(instance)
         obj = data.pop('chapter')
         data["chapter_id"] =obj.pop("id")
         data["chapter_name"] =obj.pop("name")
