@@ -54,7 +54,7 @@ class Result(models.Model):
 
 
 class ExamGroups(models.Model):
-    exam = models.ForeignKey(Exam, on_delete=models.CASCADE,related_name='exam')
+    exam = models.ForeignKey(Exam, on_delete=models.CASCADE,related_name='exam_groups')
     group = models.ForeignKey(Group, on_delete=models.PROTECT)
     start_at = models.DateTimeField()
     end_at = models.DateTimeField()

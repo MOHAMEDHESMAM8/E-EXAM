@@ -20,7 +20,7 @@ class ChaptersSerializers(serializers.Serializer):
 class ExamOptionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExamOptions
-        fields = ['id', 'count', 'difficulty', 'chapter']
+        fields = ['count', 'difficulty', 'chapter']
 
 
 def count_total_questions(exam_options):
@@ -32,7 +32,7 @@ def count_total_questions(exam_options):
 class AddExamToGroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExamGroups
-        fields = ['group_id', 'start_at', 'end_at']
+        fields = ['group', 'start_at', 'end_at']
 
 
 class GetCreateExamSerializers(serializers.ModelSerializer):
