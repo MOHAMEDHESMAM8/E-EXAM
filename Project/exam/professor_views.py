@@ -3,7 +3,7 @@ from user.models import Chapter
 from .models import Exam, ExamOptions, Result
 from user.models import Student
 
-from .serializers import ChaptersSerializers, ExamResultSerializer, ExamSerializers, GetCreateExamSerializers, AddExamToGroupSerializer
+from .serializers import ChaptersSerializers, CreateExamSerializers, ExamResultSerializer, ExamSerializers, AddExamToGroupSerializer, GetExamSerializers
 from rest_framework.views import APIView
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -34,7 +34,7 @@ class createExamView(APIView):
             2: 'S',
             3: 'T',
         }
-        serializer = GetCreateExamSerializers(data=request.data, context={'request': request,"level":LEVEL_CHOICES[level]})
+        serializer = CreateExamSerializers(data=request.data, context={'request': request,"level":LEVEL_CHOICES[level]})
         if serializer.is_valid():
             serializer.create(validated_data=request.data)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -54,13 +54,13 @@ class ExamViewSet(viewsets.ViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def retrieve(self, request, pk=None):
-        exam_obj = self.queryset.get(pk=pk)
-        serializer = GetCreateExamSerializers(exam_obj)
+        exam_obj = self.queryset.select_related('chapter').get(pk=pk)
+        serializer = GetExamSerializers(exam_obj)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     def update(self,request,pk=None):
         exam = self.queryset.get(pk=pk)
-        serializer = GetCreateExamSerializers(exam, data=request.data)
+        serializer = CreateExamSerializers(exam, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)

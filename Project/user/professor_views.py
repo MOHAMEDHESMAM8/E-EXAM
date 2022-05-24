@@ -8,7 +8,7 @@ from .models import Chapter, Group, Professor, Professor_Student, Request, Stude
 from .serializers import GetStudentRequestSerializer, GroupDetailSerializer, ProfessorRegisterSerializer, UserDataSerializer, ChapterSerializer, GetGroupNameSerializer, GetProfessorStudentsSerializer, AddGroupSerilizer, AcceptStudentRequestSerializer, GetLevelGroupSerializer
 from django.http import Http404
 from rest_framework_simplejwt.tokens import RefreshToken
-
+from rest_framework.parsers import MultiPartParser, FormParser
 
 class GetProfessorGroupsView(APIView):
     def get(self, request, level):
@@ -228,7 +228,8 @@ class StudentRank(APIView):
 
 
 class ProfessorRegisterView(APIView):
-    def post(self, request):
+    parser_classes = [MultiPartParser, FormParser]
+    def post(self, request, format=None):
         serializer = ProfessorRegisterSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()

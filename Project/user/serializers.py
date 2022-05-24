@@ -184,16 +184,35 @@ class GetLevelGroupSerializer(serializers.Serializer):
 
 
 class ProfessorRegisterSerializer(serializers.ModelSerializer):
-    user = UserCreateSerializer()
+    user = UserCreateSerializer(read_only=True)
     class Meta:
         model = Professor
         fields = ['user', 'avatar']
+
     def create(self, validated_data):
-        user_data = validated_data.pop('user')
         avatar = validated_data.pop('avatar')
-        user_data['password'] = make_password(user_data['password'])
-        user = User.objects.create(is_active=False, role='P', **user_data)
+        first_name = validated_data.pop('first_name')
+        last_name = validated_data.pop('last_name')
+        email = validated_data.pop('email')
+        phone = validated_data.pop('phone')
+        password = validated_data.pop('password')
+        user = User(
+            first_name,
+            last_name,
+            email,
+            phone,
+            is_active = True,
+            role = 'P'
+        )
+        user.set_password(password)
         professor = Professor.objects.get(user=user)
         professor.avatar = avatar
         professor.save()
         return professor
+
+    def to_representation(self, instance):
+        data = super(ProfessorRegisterSerializer, self).to_representation(instance)
+        users_data = data.pop('user')
+        for key, val in users_data.items():
+            data.update({key: val})
+        return data
