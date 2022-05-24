@@ -79,7 +79,7 @@ class GetStudentsRequestView(APIView):
             2: 'S',
             3: 'T',
         }
-        requests = Request.objects.select_related('student').filter(professor__user=request.user,Student_level=LEVEL_CHOICES[level]).values(
+        requests = Request.objects.select_related('student').filter(professor__user=request.user,Student__level=LEVEL_CHOICES[level]).values(
             'student', 'student__user__email', 'student__user__first_name', 'student__user__last_name', 'student__user__phone')
         serializer = GetStudentRequestSerializer(requests, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
