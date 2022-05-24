@@ -24,6 +24,8 @@ class getQuestionSerializer(serializers.ModelSerializer):
         data["chapter_id"] =obj.pop("id")
         data["chapter_name"] =obj.pop("name")
         return data
+
+
 class AddQuestionSerializer(serializers.ModelSerializer):
     answer = AnswerSerializer(many=True)
     class Meta:
