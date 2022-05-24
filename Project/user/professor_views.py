@@ -36,6 +36,8 @@ class AddGroupView(APIView):
 
 
 class GroupDetailsView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get_object(self, pk):
         try:
             return Group.objects.get(pk=pk)
@@ -65,6 +67,8 @@ class GroupDetailsView(APIView):
 
 
 class GetStudentsOfGroupView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, group_id):
         students = Professor_Student.objects.select_related('student').filter(group=group_id).values(
             'student__user__first_name', 'student__user__last_name', 'student__user__email', 'student__user__phone', 'student')
@@ -73,13 +77,15 @@ class GetStudentsOfGroupView(APIView):
 
 
 class GetStudentsRequestView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request,level):
         LEVEL_CHOICES = {
             1: 'F',
             2: 'S',
             3: 'T',
         }
-        requests = Request.objects.select_related('student').filter(professor__user=request.user,Student__level=LEVEL_CHOICES[level]).values(
+        requests = Request.objects.select_related('student').filter(professor__user=request.user,student__level=LEVEL_CHOICES[level]).values(
             'student', 'student__user__email', 'student__user__first_name', 'student__user__last_name', 'student__user__phone')
         serializer = GetStudentRequestSerializer(requests, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
