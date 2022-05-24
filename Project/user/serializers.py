@@ -181,3 +181,13 @@ class AcceptStudentRequestSerializer(serializers.ModelSerializer):
 class GetLevelGroupSerializer(serializers.Serializer):
     id = serializers.CharField(max_length=255)
     name = serializers.CharField(max_length=255)
+
+
+# class ProfessorRegisterSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = User
+#         fields = ['first_name', 'last_name', 'email', 'phone', 'password']
+#     def create(self, validated_data):
+#         validated_data.get = make_password(user_data['password'])
+#         user = User.objects.create(**user_data, is_active=False, role='P')
+#         return user

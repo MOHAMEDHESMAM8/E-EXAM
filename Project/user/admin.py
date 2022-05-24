@@ -4,6 +4,11 @@ from django.contrib.auth.admin import UserAdmin
 from .forms import CustomUserCreationForm, CustomUserChangeForm
 from .models import Chapter, User, Professor, Student, Group, Professor_Student, Professor_Level, Request
 
+
+class ProfessorProxy(Professor):
+    class Meta:
+        proxy = True
+
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
     form = CustomUserChangeForm
@@ -117,3 +122,7 @@ class ChapterAdmin(admin.ModelAdmin):
     @admin.display(description='Professor name')
     def professor_name(self, object):
         return f'{object.professor.user.first_name} {object.professor.user.last_name}'
+
+@admin.register(ProfessorProxy)
+class ProfessorProxyAdmin(admin.ModelAdmin):
+    list_display = ['first_name', 'email']

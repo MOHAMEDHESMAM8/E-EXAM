@@ -1,3 +1,4 @@
+from urllib import response
 from django.forms import IntegerField, ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
@@ -224,3 +225,11 @@ class StudentRank(APIView):
         .values('user__first_name', 'user__last_name')
         serializer = UserDataSerializer(students, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+# class ProfessorRegisterView(APIView):
+#     def post(self, request):
+#         serializer = ProfessorRegisterSerializer(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#         serializer.save()
+#         return Response(serializer.data, status=status.HTTP_201_CREATED)

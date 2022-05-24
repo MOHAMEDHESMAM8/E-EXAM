@@ -68,25 +68,25 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'core.wsgi.application'
-import dj_database_url
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 
-# DATABASES = {
-#         'default': {
-#             'ENGINE': 'django.db.backends.mysql',
-#             'NAME': 'e-exam',
-#             'HOST': 'localhost',
-#             'USER': 'root',
-#             'PASSWORD': ''
-#             }
-#     }
-
 DATABASES = {
-'default' : dj_database_url.config(conn_max_age=600)
-}
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'e-exam',
+            'HOST': 'localhost',
+            'USER': 'root',
+            'PASSWORD': ''
+            }
+    }
+
+# import dj_database_url
+# DATABASES = {
+# 'default' : dj_database_url.config(conn_max_age=600)
+# }
     
 
 
@@ -157,7 +157,7 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
-    'UPDATE_LAST_LOGIN': False,
+    'UPDATE_LAST_LOGIN': True,
 
     'ALGORITHM': 'HS256',
     'SIGNING_KEY': SECRET_KEY,

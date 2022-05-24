@@ -25,5 +25,6 @@ urlpatterns = [
     path('level_chapters/<int:level>/', GetProfessorChapterView.as_view()),
     path('chapter/', AddChapterView.as_view(), name='chapter'),
     path('change_student_group/', ChangeStudentGroupView.as_view(), name='change_student_group/'),
-    path('student_level_ranks/<int:level>/', StudentRank.as_view(), name='student_level_ranks')
+    path('student_level_ranks/<int:level>/', StudentRank.as_view(), name='student_level_ranks'),
+    # path('professor_register/', ProfessorRegisterView.as_view())
 ]
