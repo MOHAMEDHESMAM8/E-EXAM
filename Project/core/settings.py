@@ -72,26 +72,22 @@ import dj_database_url
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-def database():
-    try:
-        obj = {
-            'default': {
-                'ENGINE': 'django.db.backends.mysql',
-                'NAME': 'e-exam',
-                'HOST': 'localhost',
-                'USER': 'root',
-                'PASSWORD': ''
-                }
-        }
-    except OperationalError:
-        obj = {
-        'default' : dj_database_url.config(conn_max_age=600)
-        }
+try:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'e-exam',
+            'HOST': 'localhost',
+            'USER': 'root',
+            'PASSWORD': ''
+            }
+    }
+except OperationalError:
+    DATABASES = {
+    'default' : dj_database_url.config(conn_max_age=600)
+    }
     
-    return obj
 
-
-DATABASES = database()
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
