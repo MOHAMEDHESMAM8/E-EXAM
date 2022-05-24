@@ -2,13 +2,12 @@ from dataclasses import fields
 from djoser.serializers import UserSerializer as BaseUserSerializer, UserCreateSerializer as BaseUserCreateSerializer
 from rest_framework import serializers
 from .models import Group, Professor_Student, User, Student, Professor, Request, Chapter
-from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.hashers import make_password
 
 
 class UserCreateSerializer(BaseUserCreateSerializer):
     class Meta(BaseUserCreateSerializer.Meta):
-        fields = ('first_name', 'last_name',
-                  'phone', 'password', 'email', 'id')
+        fields = ('first_name', 'last_name', 'phone', 'password', 'email', 'id')
 
 
 class StudentCreateSerializer(serializers.ModelSerializer):
@@ -131,7 +130,7 @@ class AddGroupSerilizer(serializers.ModelSerializer):
 class GroupDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
-        fields = ['name']
+        fields = ['name', 'id']
 
 
 class GetProfessorStudentsSerializer(serializers.Serializer):
@@ -183,11 +182,17 @@ class GetLevelGroupSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=255)
 
 
-# class ProfessorRegisterSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = User
-#         fields = ['first_name', 'last_name', 'email', 'phone', 'password']
-#     def create(self, validated_data):
-#         validated_data.get = make_password(user_data['password'])
-#         user = User.objects.create(**user_data, is_active=False, role='P')
-#         return user
+class ProfessorRegisterSerializer(serializers.ModelSerializer):
+    user = UserCreateSerializer()
+    class Meta:
+        model = Professor
+        fields = ['user', 'avatar']
+    def create(self, validated_data):
+        user_data = validated_data.pop('user')
+        avatar = validated_data.pop('avatar')
+        user_data['password'] = make_password(user_data['password'])
+        user = User.objects.create(is_active=False, role='P', **user_data)
+        professor = Professor.objects.get(user=user)
+        professor.avatar = avatar
+        professor.save()
+        return professor

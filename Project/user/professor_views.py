@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Chapter, Group, Professor, Professor_Student, Request, Student
-from .serializers import GetStudentRequestSerializer, GroupDetailSerializer, UserDataSerializer, ChapterSerializer, GetGroupNameSerializer, GetProfessorStudentsSerializer, AddGroupSerilizer, AcceptStudentRequestSerializer, GetLevelGroupSerializer
+from .serializers import GetStudentRequestSerializer, GroupDetailSerializer, ProfessorRegisterSerializer, UserDataSerializer, ChapterSerializer, GetGroupNameSerializer, GetProfessorStudentsSerializer, AddGroupSerilizer, AcceptStudentRequestSerializer, GetLevelGroupSerializer
 from django.http import Http404
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -227,9 +227,9 @@ class StudentRank(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-# class ProfessorRegisterView(APIView):
-#     def post(self, request):
-#         serializer = ProfessorRegisterSerializer(data=request.data)
-#         serializer.is_valid(raise_exception=True)
-#         serializer.save()
-#         return Response(serializer.data, status=status.HTTP_201_CREATED)
+class ProfessorRegisterView(APIView):
+    def post(self, request):
+        serializer = ProfessorRegisterSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
