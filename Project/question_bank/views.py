@@ -2,7 +2,7 @@ from requests import delete, request
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializer import AddQuestionSerializer, GetQuestionSerializer
+from .serializer import AddQuestionSerializer, GetQuestionSerializer, getQuestionSerializer
 from .models import Question
 from django.http import Http404
 from django.db.models import F,Value
@@ -39,7 +39,7 @@ class QuestionDetialsView(APIView):
 
     def get(self, request, id):
         question = self.get_object(id)
-        serializer = AddQuestionSerializer(question)
+        serializer = getQuestionSerializer(question)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request, id):

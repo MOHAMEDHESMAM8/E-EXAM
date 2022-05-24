@@ -11,11 +11,21 @@ class chapterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Chapter
         fields = ['id', 'name']
-
-
+class getQuestionSerializer(serializers.ModelSerializer):
+    answer = AnswerSerializer(many=True)
+    chapter = chapterSerializer(read_only=True)
+    class Meta:
+        model = Question
+        fields = ['id', 'chapter', 'level', 'text', 'degree', 'difficulty',
+                    'is_true_false', 'in_practice', 'answer']
+    def to_representation(self, instance):
+        data = super(AddQuestionSerializer, self).to_representation(instance)
+        obj = data.pop('chapter')
+        data["chapter_id"] =obj.pop("id")
+        data["chapter_name"] =obj.pop("name")
+        return data
 class AddQuestionSerializer(serializers.ModelSerializer):
     answer = AnswerSerializer(many=True)
-    chapter = chapterSerializer()
     class Meta:
         model = Question
         fields = ['id', 'chapter', 'level', 'text', 'degree', 'difficulty',
@@ -25,7 +35,7 @@ class AddQuestionSerializer(serializers.ModelSerializer):
         answers = validated_data.pop('answer')
         question = Question()
         question.professor = self.context['request'].user.professor
-        question.chapter = validated_data.pop('chapter')
+        question.chapter_id = validated_data.pop('chapter')
         question.level = validated_data.pop('level')
         question.text = validated_data.pop('text')
         question.difficulty = validated_data.pop('difficulty')
