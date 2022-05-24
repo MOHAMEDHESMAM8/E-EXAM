@@ -1,5 +1,7 @@
 from pathlib import Path, os
 from datetime import timedelta
+
+from MySQLdb import OperationalError
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -66,24 +68,30 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'core.wsgi.application'
+import dj_database_url
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
+def database():
+    try:
+        obj = {
+            'default': {
+                'ENGINE': 'django.db.backends.mysql',
+                'NAME': 'e-exam',
+                'HOST': 'localhost',
+                'USER': 'root',
+                'PASSWORD': ''
+                }
+        }
+    except OperationalError:
+        obj = {
+        'default' : dj_database_url.config(conn_max_age=600)
+        }
+    
+    return obj
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'e-exam',
-#         'HOST': 'localhost',
-#         'USER': 'root',
-#         'PASSWORD': ''
-#     }
-# }
 
-import dj_database_url
-DATABASES = {
-    'default' : dj_database_url.config(conn_max_age=600)
-}
+DATABASES = database()
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'

@@ -9,9 +9,14 @@ from django.db.models import F,Value
 
 
 class AddQuestionView(APIView):
-    def post(self, request):
+    def post(self, request,level):
+        LEVEL_CHOICES = {
+            1: 'F',
+            2: 'S',
+            3: 'T',
+        }
         serializer = AddQuestionSerializer(
-            data=request.data, context={'request': request})
+            data=request.data, context={'request': request,'level':LEVEL_CHOICES[level]})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)

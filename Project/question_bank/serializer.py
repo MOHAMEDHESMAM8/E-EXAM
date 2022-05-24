@@ -36,7 +36,7 @@ class AddQuestionSerializer(serializers.ModelSerializer):
         question = Question()
         question.professor = self.context['request'].user.professor
         question.chapter = validated_data.pop('chapter')
-        question.level = validated_data.pop('level')
+        question.level = self.context['level']
         question.text = validated_data.pop('text')
         question.difficulty = validated_data.pop('difficulty')
         question.degree = validated_data.pop('degree')
