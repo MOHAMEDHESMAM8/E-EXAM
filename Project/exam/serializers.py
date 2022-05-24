@@ -193,7 +193,7 @@ class ExamResultSerializer(serializers.Serializer):
 class StudentExamDetailsSerializer(serializers.Serializer):
     id=serializers.IntegerField(source='exam')
     name=serializers.CharField(max_length=255, source='exam__name')
-    start_at = serializers.DateTimeField()
-    end_at = serializers.DateTimeField()
+    start_at = serializers.DateTimeField(format='%d-%m-%Y %H:%M')
+    end_at = serializers.DateTimeField(format='%d-%m-%Y %H:%M')
     time = serializers.IntegerField(source='exam__time')
     chapter = serializers.CharField(max_length=255, source='exam__chapter')

@@ -1,5 +1,6 @@
 from urllib import response
 from django.forms import IntegerField, ValidationError
+from requests import delete
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.views import APIView
@@ -234,3 +235,12 @@ class ProfessorRegisterView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class deleteStudentsView(APIView):
+    def delete(self,request):
+        data = request.data
+        for id in data:
+            obj = Professor_Student.objects.get(student__id =id,professor=request.user.professor)
+            obj.delete()
+        return Response("done",status=status.HTTP_204_NO_CONTENT)
