@@ -33,7 +33,7 @@ class GetQuestionView(APIView):
 class QuestionDetialsView(APIView):
     def get_object(self, pk):
         try:
-            return Question.objects.get(pk=pk)
+            return Question.objects.select_related('chapter').get(pk=pk)
         except Question.DoesNotExist:
             raise Http404
 

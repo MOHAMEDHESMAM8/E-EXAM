@@ -70,20 +70,20 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'e-exam',
-#         'HOST': 'localhost',
-#         'USER': 'root',
-#         'PASSWORD': ''
-#     }
-# }
-
-import dj_database_url
 DATABASES = {
-    'default' : dj_database_url.config(conn_max_age=600)
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'e-exam',
+        'HOST': 'localhost',
+        'USER': 'root',
+        'PASSWORD': ''
+    }
 }
+
+# import dj_database_url
+# DATABASES = {
+#     'default' : dj_database_url.config(conn_max_age=600)
+# }
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
@@ -97,6 +97,7 @@ EMAIL_USE_TLS = True
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
+
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
@@ -110,7 +111,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
