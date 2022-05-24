@@ -111,6 +111,7 @@ class GetStudentRequestSerializer(serializers.Serializer):
 
 class GetGroupNameSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=255)
+    id = serializers.IntegerField()
 
 
 class AddGroupSerilizer(serializers.ModelSerializer):

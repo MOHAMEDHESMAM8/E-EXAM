@@ -46,6 +46,7 @@ class GetCreateExamSerializers(serializers.ModelSerializer):
     def create(self, validated_data, **kwargs):
         exam_options = validated_data.pop('exam_options')
         exam_groups = validated_data.pop('exam_groups')
+        print(exam_groups)
         exam = Exam()
         exam.name = validated_data.pop('name')
         exam.time = validated_data.pop('time')
