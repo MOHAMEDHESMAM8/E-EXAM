@@ -67,3 +67,14 @@ class ExamResultView(APIView):
         .values('student__user__phone','student__user__first_name','student__user__last_name','student__user__phone','result')
         serilaizer= ExamResultSerializer(qyeryset,many=True)
         return Response(serilaizer.data,status=status.HTTP_200_OK)
+
+
+class deleteExamOptions(APIView):
+    permission_classes=[IsAuthenticated]
+
+    def delete(self,request,pk):
+        obj = ExamOptions.objects.get(pk=pk)
+        obj.delete()
+        return Response('done', status=status.HTTP_204_NO_CONTENT)
+
+

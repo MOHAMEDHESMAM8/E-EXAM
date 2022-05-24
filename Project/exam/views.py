@@ -1,4 +1,6 @@
 from tokenize import group
+
+from requests import delete
 from .serializers import StudentAvailableExamSerializer, StudentExamHistorySerializer, StudentExamDetailsSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -92,3 +94,4 @@ class StudentExamDetailsViewSet(APIView):
       .values('exam', 'exam__name', 'start_at', 'end_at', 'exam__time', 'exam__chapter')
     serializer = StudentExamDetailsSerializer(exam_group, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+

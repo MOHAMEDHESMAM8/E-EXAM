@@ -67,6 +67,7 @@ class AddQuestionSerializer(serializers.ModelSerializer):
         instance.in_practice = validated_data.get(
             'in_practice', instance.in_practice)
         instance.save()
+        print(answers)
         for obj in answer_data:
             answer = answers.pop(0)
             answer.answer = obj.get('answer', answer.answer)

@@ -1,12 +1,14 @@
 from django.urls import path
 
-from .professor_views import ExamResultView, ExamViewSet, GetProfessorChapters 
+from .professor_views import ExamResultView, ExamViewSet, GetProfessorChapters ,deleteExamOptions
 from .views import ExamSubmitView, StudentExamDetailsViewSet, StudentGetExamView, StudentAvailableExamView, StudentExamHistoryView
 from rest_framework import routers
 
 urlpatterns = [
     path('chapters/<int:level>/', GetProfessorChapters.as_view(), name='Chapters'),
     path('examResults/<int:exam_id>/', ExamResultView.as_view(), name='get exam result'),
+    path('deleteOption/<int:pk>/', deleteExamOptions.as_view(), name='delete exam option'),
+
     # Student URLs
     path('student_get_exam/<int:exam_id>/', StudentGetExamView.as_view(), name='student_get_exam'),
     path('student_available_exams/', StudentAvailableExamView.as_view(), name='student_available_exams'),

@@ -83,12 +83,20 @@ class GetCreateExamSerializers(serializers.ModelSerializer):
         instance.save()
         for obj in exam_option:
             new_obj = options.pop(0)
+            if obj.get('id') is None:
+                add_record =ExamOptions()
+                add_record.count = obj.get('count')
+                add_record.difficulty = obj.get('difficulty')
+                add_record.chapter_id = obj.get('chapter')
+                add_record.exam = instance
+                add_record.save()
             new_obj.count = obj.get('count', new_obj.count)
             new_obj.difficulty = obj.get('difficulty', new_obj.difficulty)
             new_obj.chapter_id = obj.get('chapter', new_obj.chapter_id)
             new_obj.save()
-        
         return instance
+
+
 
 class StudentChaptersSerializers(serializers.ModelSerializer):
     class Meta:
