@@ -1,19 +1,24 @@
 from rest_framework import serializers
 from .models import Answer, Question
+from user.models import Chapter
 
 
 class AnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Answer
         fields = ['id', 'answer', 'is_correct']
+class chapterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Chapter
+        fields = ['id', 'name']
 
 
 class AddQuestionSerializer(serializers.ModelSerializer):
     answer = AnswerSerializer(many=True)
-
+    chapter = chapterSerializer()
     class Meta:
         model = Question
-        fields = ['id', 'chapter__name', 'level', 'text', 'degree', 'difficulty',
+        fields = ['id', 'chapter', 'level', 'text', 'degree', 'difficulty',
                     'is_true_false', 'in_practice', 'answer']
 
     def create(self, validated_data):
@@ -56,7 +61,12 @@ class AddQuestionSerializer(serializers.ModelSerializer):
             answer.is_correct = obj.get('is_correct', answer.is_correct)
             answer.save()
         return instance
-
+    def to_representation(self, instance):
+        data = super(AddQuestionSerializer, self).to_representation(instance)
+        obj = data.pop('chapter')
+        data["chapter_id"] =obj.pop("id")
+        data["chapter_name"] =obj.pop("name")
+        return data
 
 class GetQuestionSerializer(serializers.Serializer):
     id = serializers.IntegerField()
