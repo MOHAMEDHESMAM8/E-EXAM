@@ -25,6 +25,23 @@ class GetProfessorChapters(APIView):
 
 
 
+class createExamView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, level):
+        LEVEL_CHOICES = {
+            1: 'F',
+            2: 'S',
+            3: 'T',
+        }
+        serializer = GetCreateExamSerializers(data=request.data, context={'request': request,"level":LEVEL_CHOICES[level]})
+        if serializer.is_valid():
+            serializer.create(validated_data=request.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
 
 class ExamViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated]
@@ -35,13 +52,6 @@ class ExamViewSet(viewsets.ViewSet):
         data = self.queryset.filter(chapter=pk)
         serializer = ExamSerializers(data, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def create(self, request):
-        serializer = GetCreateExamSerializers(data=request.data, context={'request': request})
-        if serializer.is_valid():
-            serializer.create(validated_data=request.data)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, pk=None):
         exam_obj = self.queryset.get(pk=pk)

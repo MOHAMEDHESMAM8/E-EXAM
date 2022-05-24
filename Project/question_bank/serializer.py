@@ -30,7 +30,7 @@ class AddQuestionSerializer(serializers.ModelSerializer):
     answer = AnswerSerializer(many=True)
     class Meta:
         model = Question
-        fields = ['id', 'chapter', 'level', 'text', 'degree', 'difficulty',
+        fields = ['id', 'chapter', 'text', 'degree', 'difficulty',
                     'is_true_false', 'in_practice', 'answer']
 
     def create(self, validated_data):

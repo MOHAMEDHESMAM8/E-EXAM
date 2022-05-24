@@ -50,7 +50,7 @@ class GetCreateExamSerializers(serializers.ModelSerializer):
         exam.time = validated_data.pop('time')
         exam.professor = self.context['request'].user.professor
         exam.chapter_id = validated_data.pop('chapter')
-        exam.level = validated_data.pop('level')
+        exam.level = self.context['level']
         exam.total = count_total_questions(exam_options)
         exam.save()
         for obj in exam_options:
