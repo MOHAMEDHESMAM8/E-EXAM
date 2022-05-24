@@ -14,7 +14,7 @@ class ExamSerializers(serializers.Serializer):
 class StudentChaptersSerializers(serializers.ModelSerializer):
     class Meta:
         model = Chapter
-        fields = ['name']
+        fields = ['id','name']
 
 
 class ChaptersSerializers(serializers.Serializer):
@@ -41,10 +41,33 @@ class AddExamToGroupSerializer(serializers.ModelSerializer):
         fields = ['group', 'start_at', 'end_at']
 
 
+class GETExamGroupSerializer(serializers.ModelSerializer):
+    group_name = serializers.SerializerMethodField()
+    start_at = serializers.DateTimeField(format='%Y-%m-%dT%H:%M')
+    end_at = serializers.DateTimeField(format='%Y-%m-%dT%H:%M')
+
+    class Meta:
+        model = ExamGroups
+        fields = ['group','group_name', 'start_at', 'end_at']
+
+    def get_group_name(self,obj):
+        return obj.group.name
+
+class GETExamOptionsSerializer(serializers.ModelSerializer):
+    chapter = StudentChaptersSerializers()
+    class Meta:
+        model = ExamOptions
+        fields = ['id','count', 'difficulty', 'chapter']
+
+    def to_representation(self, instance):
+        data = super(GETExamOptionsSerializer, self).to_representation(instance)
+        data["chapter_name"] =data.get('chapter').get('name')
+        data["chapter_id"] =data.pop('chapter').get('id')
+        return data
 
 class GetExamSerializers(serializers.ModelSerializer):
-    exam_options = ExamOptionsSerializer(many=True)
-    exam_groups = AddExamToGroupSerializer(many=True)
+    exam_options = GETExamOptionsSerializer(many=True)
+    exam_groups = GETExamGroupSerializer(many=True)
     chapter = StudentChaptersSerializers()
     class Meta:
         model = Exam
