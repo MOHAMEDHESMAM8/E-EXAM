@@ -72,20 +72,19 @@ import dj_database_url
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-try:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'e-exam',
-            'HOST': 'localhost',
-            'USER': 'root',
-            'PASSWORD': ''
-            }
-    }
-except OperationalError:
-    DATABASES = {
-    'default' : dj_database_url.config(conn_max_age=600)
-    }
+# DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.mysql',
+#             'NAME': 'e-exam',
+#             'HOST': 'localhost',
+#             'USER': 'root',
+#             'PASSWORD': ''
+#             }
+#     }
+
+DATABASES = {
+'default' : dj_database_url.config(conn_max_age=600)
+}
     
 
 
