@@ -145,6 +145,7 @@ class StudentGroupAdmin(admin.ModelAdmin):
     list_display = ['student_name', 'professor_name', 'group']
     list_per_page = 20
     ordering = ['group']
+
     search_fields = ['first_name', 'group']
     @admin.display(description='Student name')
     def student_name(self, object):
@@ -156,6 +157,7 @@ class StudentGroupAdmin(admin.ModelAdmin):
 @admin.register(Professor_Level)
 class ProfessorLevelAdmin(admin.ModelAdmin):
     list_display = ['professor_name', 'level']
+    readonly_fields = ('score')
     list_per_page = 20
     ordering = ['level']
     @admin.display(description='Professor name')
