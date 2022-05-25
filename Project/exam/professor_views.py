@@ -1,8 +1,7 @@
-from rest_framework.permissions import IsAuthenticated
 from user.models import Chapter
 from .models import Exam, ExamOptions, Result
 from user.models import Student
-
+from user.permissions import IsStudent, IsProfessor
 from .serializers import ChaptersSerializers, CreateExamSerializers, ExamResultSerializer, ExamSerializers, AddExamToGroupSerializer, GetExamSerializers
 from rest_framework.views import APIView
 from rest_framework import viewsets
@@ -11,7 +10,7 @@ from rest_framework import status
 from rest_framework.decorators import action
 
 class GetProfessorChapters(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsProfessor]
 
     def get(self, request, level):
         LEVEL_CHOICES = {
@@ -26,7 +25,7 @@ class GetProfessorChapters(APIView):
 
 
 class createExamView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsProfessor]
 
     def post(self, request, level):
         LEVEL_CHOICES = {
@@ -44,7 +43,7 @@ class createExamView(APIView):
 
 
 class ExamViewSet(viewsets.ViewSet):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsProfessor]
     queryset = Exam.objects.all()
 
     @action(detail=True, methods=['get'], name='List of Exams')
@@ -80,7 +79,7 @@ class ExamResultView(APIView):
 
 
 class deleteExamOptions(APIView):
-    permission_classes=[IsAuthenticated]
+    permission_classes=[IsProfessor]
 
     def delete(self,request,pk):
         obj = ExamOptions.objects.get(pk=pk)

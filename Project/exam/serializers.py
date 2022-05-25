@@ -75,10 +75,8 @@ class GetExamSerializers(serializers.ModelSerializer):
         
     def to_representation(self, instance):
         data = super(GetExamSerializers, self).to_representation(instance)
-        obj = data.pop('chapter')
-        for key, val in obj.items():
-            data.update({key: val})
-        return data
+        data["chapter_name"] =data.get('chapter').get('name')
+        data["chapter_id"] =data.pop('chapter').get('id')
         return data
 
 class CreateExamSerializers(serializers.ModelSerializer):
