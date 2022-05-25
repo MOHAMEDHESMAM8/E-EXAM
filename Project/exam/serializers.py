@@ -76,6 +76,8 @@ class GetExamSerializers(serializers.ModelSerializer):
     def to_representation(self, instance):
         data = super(GetExamSerializers, self).to_representation(instance)
         data["chapter_name"] =data.pop('chapter').get('name')
+        data["chapter_id"] =data.pop('chapter').get('id')
+
         return data
 
 class CreateExamSerializers(serializers.ModelSerializer):
@@ -119,10 +121,9 @@ class CreateExamSerializers(serializers.ModelSerializer):
         exam_option = validated_data.pop('exam_options')
         options = (instance.exam_options).all()
         options = list(options)
-        
         instance.name = validated_data.get('name', instance.name)
         instance.time = validated_data.get('time', instance.time)
-        instance.chapter_id = validated_data.get('chapter', instance.chapter)
+        instance.chapter_id = validated_data.get('chapter', instance.chapter_id)
         instance.level = validated_data.get('level', instance.level)
         instance.total = count_total_questions(exam_option)
         instance.save()
@@ -132,7 +133,7 @@ class CreateExamSerializers(serializers.ModelSerializer):
                 add_record =ExamOptions()
                 add_record.count = obj.get('count')
                 add_record.difficulty = obj.get('difficulty')
-                add_record.chapter_id = obj.get('chapter')
+                add_record.chapter = obj.get('chapter')
                 add_record.exam = instance
                 add_record.save()
             new_obj.count = obj.get('count', new_obj.count)

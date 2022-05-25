@@ -118,7 +118,7 @@ class GetGroupNameSerializer(serializers.Serializer):
 class AddGroupSerilizer(serializers.ModelSerializer):
     class Meta:
         model = Group
-        fields = ['name']
+        fields = ['name', 'id']
 
     def create(self, validated_data):
         group = Group()
