@@ -41,6 +41,9 @@ class StudentsList(admin.ModelAdmin):
             'fields': ('is_active', 'is_superuser', 'is_staff',)}),
         ('Time', {'fields': ('last_login', 'created_at', 'updated_at')}),
     )
+    def get_queryset(self, request):
+        qs = super(StudentsList, self).get_queryset(request)
+        return qs.filter(role='S')
 @admin.register(ProfessorRequest)
 class ProfessorRequest(admin.ModelAdmin):
     list_display = ['professor_name','email', 'phone', 'is_active']
