@@ -192,3 +192,5 @@ class Chapter(models.Model):
         Professor, on_delete=models.CASCADE, related_name='chapter')
     level = models.CharField(
         max_length=1, choices=LEVEL_CHOICES, default=LEVEL_TWO)
+    def __str__(self) -> str:
+        return self.name
