@@ -62,7 +62,9 @@ class QuestionDetialsView(APIView):
 class DeleteQuestionsView(APIView):
     def delete(self, request):
         if all(isinstance(x, int) for x in request.data):
-            questions = Question.objects.filter(id__in=request.data).delete()
+            for id in  request.data:
+                question = Question.objects.get(id = id)
+                question.delete()
             return Response('Questions are deleted', status=status.HTTP_200_OK)
         return Response('Error, please try again', status=status.HTTP_400_BAD_REQUEST)
     

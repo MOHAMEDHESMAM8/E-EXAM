@@ -110,15 +110,15 @@ class CustomUserAdmin(admin.ModelAdmin):
         return f'{object.first_name} {object.last_name}'
 
 #@admin.register(Professor)
-class ProfessorAdmin(admin.ModelAdmin):
-    list_display = ['professor_name', 'email', 'phone']
-    list_display_links = ('professor_name', 'email',)
-    list_per_page = 20
-    list_select_related = ['user']
-    ordering = ['user__email']
-    @admin.display(description='Professor name')
-    def professor_name(self, object):
-        return f'{object.user.first_name} {object.user.last_name}'
+# class ProfessorAdmin(admin.ModelAdmin):
+#     list_display = ['professor_name', 'email', 'phone']
+#     list_display_links = ('professor_name', 'email',)
+#     list_per_page = 20
+#     list_select_related = ['user']
+#     ordering = ['user__email']
+#     @admin.display(description='Professor name')
+#     def professor_name(self, object):
+#         return f'{object.user.first_name} {object.user.last_name}'
 
 
 # @admin.register(Student)
@@ -159,13 +159,12 @@ class StudentGroupAdmin(admin.ModelAdmin):
     def professor_name(self, object):
         return f'{object.group.professor.user.first_name} {object.group.professor.user.last_name}'
 
-# @admin.register(Professor_Level)
-# class ProfessorLevelAdmin(admin.ModelAdmin):
-#     list_display = ['professor_name', 'level']
-#     readonly_fields = ('score')
-#     list_per_page = 20
-#     ordering = ['level']
-#     @admin.display(description='Professor name')
-#     def professor_name(self, object):
-#         return f'{object.professor.user.first_name} {object.professor.user.last_name}'
-admin.site.register(Professor_Level)
+@admin.register(Professor_Level)
+class ProfessorLevelAdmin(admin.ModelAdmin):
+    list_display = ['professor_name', 'level']
+    list_per_page = 20
+    ordering = ['level']
+    @admin.display(description='Professor name')
+    def professor_name(self, object):
+        return f'{object.professor.user.first_name} {object.professor.user.last_name}'
+# admin.site.register(Professor_Level)

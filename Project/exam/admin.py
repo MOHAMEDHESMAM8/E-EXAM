@@ -29,3 +29,6 @@ class ExamGroupsAdmin(admin.ModelAdmin):
 @admin.register(Result)
 class ResultAdmin(admin.ModelAdmin):
     list_display = ['student' , 'exam' ,'result' ,'created_at']
+    readonly_fields = ('result',)
+    def has_add_permission(self, request, obj=None):
+        return False
