@@ -15,4 +15,4 @@ class QuestionLine(admin.StackedInline):
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
     inlines = [QuestionLine]
-    list_display = ['professor','text' , 'degree' , 'chapter' , 'is_true_false' , 'in_practice']
+    list_display = ['professor','text' , 'degree' , 'chapter' , 'is_true_false', 'difficulty', 'in_practice']

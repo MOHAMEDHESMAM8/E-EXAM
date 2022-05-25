@@ -188,15 +188,13 @@ class ProfessorRegisterSerializer(serializers.ModelSerializer):
     user = UserCreateSerializer()
     class Meta:
         model = Professor
-        fields = ['user', 'avatar']
+        fields = ['user']
 
     def create(self, validated_data):
         user_data = validated_data.pop('user')
         print(user_data)
-        avatar = validated_data.pop('avatar')
         user_data['password'] = make_password(user_data['password'])
         user = User.objects.create(is_active=False, role='P', **validated_data)
         professor = Professor.objects.get(user=user)
-        professor.avatar = avatar
         professor.save()
         return professor
