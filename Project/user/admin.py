@@ -159,12 +159,13 @@ class StudentGroupAdmin(admin.ModelAdmin):
     def professor_name(self, object):
         return f'{object.group.professor.user.first_name} {object.group.professor.user.last_name}'
 
-@admin.register(Professor_Level)
-class ProfessorLevelAdmin(admin.ModelAdmin):
-    list_display = ['professor_name', 'level']
-    readonly_fields = ('score')
-    list_per_page = 20
-    ordering = ['level']
-    @admin.display(description='Professor name')
-    def professor_name(self, object):
-        return f'{object.professor.user.first_name} {object.professor.user.last_name}'
+# @admin.register(Professor_Level)
+# class ProfessorLevelAdmin(admin.ModelAdmin):
+#     list_display = ['professor_name', 'level']
+#     readonly_fields = ('score')
+#     list_per_page = 20
+#     ordering = ['level']
+#     @admin.display(description='Professor name')
+#     def professor_name(self, object):
+#         return f'{object.professor.user.first_name} {object.professor.user.last_name}'
+admin.site.register(Professor_Level)
