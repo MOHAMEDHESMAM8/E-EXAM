@@ -135,7 +135,7 @@ class ProfessorAdmin(admin.ModelAdmin):
 #         return f'{object.user.first_name} {object.user.last_name}'
 
 
-#@admin.register(Group)
+@admin.register(Group)
 class GroupAdmin(admin.ModelAdmin):
     list_display = ['professor_name', 'name', 'level', 'created_at']
     list_per_page = 20
