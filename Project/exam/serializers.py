@@ -75,9 +75,10 @@ class GetExamSerializers(serializers.ModelSerializer):
         
     def to_representation(self, instance):
         data = super(GetExamSerializers, self).to_representation(instance)
-        data["chapter_name"] =data.pop('chapter').get('name')
-        data["chapter_id"] =data.pop('chapter').get('id')
-
+        obj = data.pop('chapter')
+        for key, val in obj.items():
+            data.update({key: val})
+        return data
         return data
 
 class CreateExamSerializers(serializers.ModelSerializer):
@@ -104,7 +105,7 @@ class CreateExamSerializers(serializers.ModelSerializer):
             new_obj = ExamOptions()
             new_obj.count = obj.pop('count')
             new_obj.difficulty = obj.pop('difficulty')
-            new_obj.chapter_id = obj.pop('chapter')
+            new_obj.chapter = obj.pop('chapter')
             new_obj.exam = exam
             new_obj.save()
         for obj in exam_groups:
