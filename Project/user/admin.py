@@ -57,7 +57,8 @@ class ProfessorRequest(admin.ModelAdmin):
             'fields': ('is_active', 'is_superuser', 'is_staff',)}),
         ('Time', {'fields': ('last_login', 'created_at', 'updated_at')}),
     )
-
+    def has_add_permission(self, request, obj=None):
+        return False
     def make_active (modeladmin,request, queryset):
         queryset.update(is_active = True)
         messages.success(request , "Selected Record(s) Marked as Active Successfully !!")
@@ -137,12 +138,13 @@ class ProfessorAdmin(admin.ModelAdmin):
 
 @admin.register(Group)
 class GroupAdmin(admin.ModelAdmin):
-    list_display = ['professor_name', 'name', 'level', 'created_at']
+    list_display = ['professor_name', 'name', 'level','student_number' , 'created_at']
     list_per_page = 20
-    @admin.display(description='Professor name')
     def professor_name(self, object):
         return f'{object.professor.user.first_name} {object.professor.user.last_name}'
-
+    def student_number(self, object):
+        return f'{Professor_Student.objects.filter(professor=object.professor, group = object.id).count()}'
+    
 @admin.register(Professor_Student)
 class StudentGroupAdmin(admin.ModelAdmin):
     list_display = ['student_name', 'professor_name', 'group']
