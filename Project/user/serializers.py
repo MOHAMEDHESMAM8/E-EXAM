@@ -1,3 +1,4 @@
+from asyncore import read
 from dataclasses import fields
 from djoser.serializers import UserSerializer as BaseUserSerializer, UserCreateSerializer as BaseUserCreateSerializer
 from rest_framework import serializers
@@ -117,12 +118,12 @@ class GetGroupNameSerializer(serializers.Serializer):
 class AddGroupSerilizer(serializers.ModelSerializer):
     class Meta:
         model = Group
-        fields = ['name', 'level']
+        fields = ['name']
 
     def create(self, validated_data):
         group = Group()
         group.name = validated_data.pop('name')
-        group.level = validated_data.pop('level')
+        group.level = self.context['level']
         group.professor = self.context['request'].user.professor
         group.save()
         return group
@@ -184,35 +185,18 @@ class GetLevelGroupSerializer(serializers.Serializer):
 
 
 class ProfessorRegisterSerializer(serializers.ModelSerializer):
-    user = UserCreateSerializer(read_only=True)
+    user = UserCreateSerializer()
     class Meta:
         model = Professor
         fields = ['user', 'avatar']
 
     def create(self, validated_data):
+        user_data = validated_data.pop('user')
+        print(user_data)
         avatar = validated_data.pop('avatar')
-        first_name = validated_data.pop('first_name')
-        last_name = validated_data.pop('last_name')
-        email = validated_data.pop('email')
-        phone = validated_data.pop('phone')
-        password = validated_data.pop('password')
-        user = User(
-            first_name,
-            last_name,
-            email,
-            phone,
-            is_active = True,
-            role = 'P'
-        )
-        user.set_password(password)
+        user_data['password'] = make_password(user_data['password'])
+        user = User.objects.create(is_active=False, role='P', **validated_data)
         professor = Professor.objects.get(user=user)
         professor.avatar = avatar
         professor.save()
         return professor
-
-    def to_representation(self, instance):
-        data = super(ProfessorRegisterSerializer, self).to_representation(instance)
-        users_data = data.pop('user')
-        for key, val in users_data.items():
-            data.update({key: val})
-        return data

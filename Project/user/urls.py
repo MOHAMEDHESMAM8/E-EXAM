@@ -18,7 +18,7 @@ urlpatterns = [
     path('group_details/<int:group_id>/', GroupDetailsView.as_view()),
     path('get_students_group/<int:group_id>/', GetStudentsOfGroupView.as_view()),
     path('professor_students/<int:level>/', GetProfessorStudentsView.as_view()),
-    path('add_group/', AddGroupView.as_view()),
+    path('add_group/<int:level>/', AddGroupView.as_view()),
     path('accept_student_request/', AcceptStudentsRequestsView.as_view()),
     path('reject_student_request/', RejectStudentRequestView.as_view()),
     path('level_groups/<int:level>/', GetLevelGroupView.as_view()),

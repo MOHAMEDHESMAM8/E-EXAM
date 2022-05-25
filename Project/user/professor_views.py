@@ -28,9 +28,14 @@ class GetProfessorGroupsView(APIView):
 
 
 class AddGroupView(APIView):
-    def post(self, request):
+    def post(self, request,level):
+        LEVEL_CHOICES = {
+            1: 'F',
+            2: 'S',
+            3: 'T',
+        }
         serializer = AddGroupSerilizer(
-            data=request.data, context={'request': request})
+            data=request.data, context={'request': request, 'level':LEVEL_CHOICES[level]})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -151,8 +156,7 @@ class RejectStudentRequestView(APIView):
     def post(self, request):
         if all(isinstance(x, int) for x in request.data):
             for student in request.data:
-                student_request = Request.objects.get(
-                    student=student, professor=request.user.professor)
+                student_request = Request.objects.get(student=student, professor=request.user.professor)
                 student_request.delete()
             return Response("Student Request is Rejected", status=status.HTTP_200_OK)
         return Response("Error, please try again", status=status.HTTP_400_BAD_REQUEST)
