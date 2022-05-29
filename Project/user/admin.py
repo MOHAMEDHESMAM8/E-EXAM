@@ -44,6 +44,7 @@ class StudentsList(admin.ModelAdmin):
     def get_queryset(self, request):
         qs = super(StudentsList, self).get_queryset(request)
         return qs.filter(role='S')
+
 @admin.register(ProfessorRequest)
 class ProfessorRequest(admin.ModelAdmin):
     list_display = ['professor_name','email', 'phone', 'is_active']
@@ -167,4 +168,13 @@ class ProfessorLevelAdmin(admin.ModelAdmin):
     @admin.display(description='Professor name')
     def professor_name(self, object):
         return f'{object.professor.user.first_name} {object.professor.user.last_name}'
-# admin.site.register(Professor_Level)
+
+@admin.register(Request)
+class StudentRequest(admin.ModelAdmin):
+    list_display = ['student_name', 'professor_name', 'created_at']
+    list_per_page = 20
+    ordering = ['created_at']
+    def student_name(self, object):
+        return f'{object.student.user.first_name} {object.student.user.last_name}'
+    def professor_name(self, object):
+        return f'{object.professor.user.first_name} {object.professor.user.last_name}'
