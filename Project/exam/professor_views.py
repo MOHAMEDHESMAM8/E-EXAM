@@ -11,7 +11,6 @@ from rest_framework.decorators import action
 
 class GetProfessorChapters(APIView):
     permission_classes = [IsProfessor]
-
     def get(self, request, level):
         LEVEL_CHOICES = {
             1: 'F',
@@ -43,7 +42,7 @@ class createExamView(APIView):
 
 
 class ExamViewSet(viewsets.ViewSet):
-    # permission_classes = [IsProfessor]
+    permission_classes = [IsProfessor]
     queryset = Exam.objects.all()
 
     @action(detail=True, methods=['get'], name='List of Exams')
@@ -71,6 +70,7 @@ class ExamViewSet(viewsets.ViewSet):
 
 
 class ExamResultView(APIView):
+    permission_classes = [IsProfessor]
     def get(self,request,exam_id):
         qyeryset = Result.objects.select_related('student__user').filter(exam_id= exam_id)\
         .values('student__user__phone','student__user__first_name','student__user__last_name','student__user__phone','result')
@@ -80,7 +80,6 @@ class ExamResultView(APIView):
 
 class deleteExamOptions(APIView):
     permission_classes=[IsProfessor]
-
     def delete(self,request,pk):
         obj = ExamOptions.objects.get(pk=pk)
         obj.delete()

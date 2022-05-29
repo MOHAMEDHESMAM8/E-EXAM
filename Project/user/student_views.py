@@ -1,10 +1,10 @@
+from django.http import Http404
 from rest_framework import status
+from .permissions import IsStudent
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import Professor_Student, Request, Student, Professor_Level, User
+from .models import Professor_Student, Professor_Level, User
 from .serializers import StudentCreateSerializer, GetAllProfessorsSerializer, StudentProfileSerializer, StudentRequestSerializer,GetMyProfessorsSerializer
-from django.shortcuts import get_object_or_404
-from django.http import Http404
 
 
 class StudentCreateView(APIView):
@@ -16,6 +16,7 @@ class StudentCreateView(APIView):
 
 
 class GetAllProfessorView(APIView):
+    permission_classes = [IsStudent]
     def get(self, request):
         my_professors = Professor_Student.objects.filter(
             student__user=request.user).values('professor')
@@ -26,6 +27,7 @@ class GetAllProfessorView(APIView):
 
 
 class StudentRequestView(APIView):
+    permission_classes = [IsStudent]
     def post(self, request):
         serializer = StudentRequestSerializer(
             data=request.data, context={'request': request})
@@ -35,6 +37,7 @@ class StudentRequestView(APIView):
 
 
 class StudentProfileView(APIView):
+    permission_classes = [IsStudent]
     def get_object(self, pk):
         try:
             return User.objects.get(pk=pk)
@@ -55,6 +58,7 @@ class StudentProfileView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class GetStudentProfessorView(APIView):
+    permission_classes = [IsStudent]
     def get(self, request):
         professors = Professor_Student.objects.select_related('professor').filter(student=request.user.student)\
             .values('professor', 'professor__user__first_name', 'professor__user__last_name', 'professor__avatar')

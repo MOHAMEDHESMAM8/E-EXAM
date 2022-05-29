@@ -1,14 +1,14 @@
-from requests import delete, request
-from rest_framework import status
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from .serializer import AddQuestionSerializer, GetQuestionSerializer, getQuestionSerializer
 from .models import Question
 from django.http import Http404
-from django.db.models import F,Value
+from rest_framework import status
+from rest_framework.views import APIView
+from user.permissions import IsProfessor
+from rest_framework.response import Response
+from .serializer import AddQuestionSerializer, GetQuestionSerializer, getQuestionSerializer
 
 
 class AddQuestionView(APIView):
+    permission_classes = [IsProfessor]
     def post(self, request,level):
         LEVEL_CHOICES = {
             1: 'F',
@@ -23,6 +23,7 @@ class AddQuestionView(APIView):
 
 
 class GetQuestionView(APIView):
+    permission_classes = [IsProfessor]
     def get(self, request, level):
         LEVEL_CHOICES = {
             1: 'F',
@@ -36,6 +37,7 @@ class GetQuestionView(APIView):
 
 
 class QuestionDetialsView(APIView):
+    permission_classes = [IsProfessor]
     def get_object(self, pk):
         try:
             return Question.objects.select_related('chapter').get(pk=pk)
@@ -60,6 +62,7 @@ class QuestionDetialsView(APIView):
         return Response("Question is deleted", status=status.HTTP_200_OK)
 
 class DeleteQuestionsView(APIView):
+    permission_classes = [IsProfessor]
     def delete(self, request):
         if all(isinstance(x, int) for x in request.data):
             for id in  request.data:

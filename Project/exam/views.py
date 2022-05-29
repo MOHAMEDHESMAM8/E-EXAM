@@ -1,6 +1,3 @@
-from tokenize import group
-
-from requests import delete
 from .serializers import StudentAvailableExamSerializer, StudentExamHistorySerializer, StudentExamDetailsSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -10,28 +7,31 @@ from .models import Exam, ExamGroups, ExamOptions, Result
 from question_bank.models import Question
 from user.models import Professor_Student, Student
 from django.core.exceptions import ObjectDoesNotExist
+from user.permissions import IsStudent
 
 class StudentGetExamView(APIView):
-  def get(self, request, exam_id):
-    exam_option  = ExamOptions.objects.select_related('exam').filter(exam_id=exam_id).values(
-        'chapter', 'difficulty', 'count', 'exam__level')
-    questions_data = []
-    for obj in exam_option:
-      questions = list(Question.objects \
-      .prefetch_related('answer') \
-      .filter(chapter=obj['chapter'], level=obj['exam__level'], difficulty=obj['difficulty'])\
-      .order_by('?')[:obj['count']]
-      )
-      for i in range(0,len(questions)):
-            obj = {
-              'id': questions[i].id,
-              'text':questions[i].text,
-              'answers':list(questions[i].answer.all().order_by('?').values('id', 'answer', 'is_correct')),
-            }
-            questions_data.append(obj)
-    return Response(questions_data, status=status.HTTP_200_OK)
+    permission_classes = [IsStudent]
+    def get(self, request, exam_id):
+      exam_option  = ExamOptions.objects.select_related('exam').filter(exam_id=exam_id).values(
+          'chapter', 'difficulty', 'count', 'exam__level')
+      questions_data = []
+      for obj in exam_option:
+        questions = list(Question.objects \
+        .prefetch_related('answer') \
+        .filter(chapter=obj['chapter'], level=obj['exam__level'], difficulty=obj['difficulty'])\
+        .order_by('?')[:obj['count']]
+        )
+        for i in range(0,len(questions)):
+              obj = {
+                'id': questions[i].id,
+                'text':questions[i].text,
+                'answers':list(questions[i].answer.all().order_by('?').values('id', 'answer', 'is_correct')),
+              }
+              questions_data.append(obj)
+      return Response(questions_data, status=status.HTTP_200_OK)
 
 class StudentAvailableExamView(APIView):
+    permission_classes = [IsStudent]
     def get(self, request):
       student_groups = Professor_Student.objects.filter(student=request.user.student).values_list('group', flat=True)
       student_exam = Result.objects.filter(student=request.user.student).values_list('exam', flat=True)
@@ -42,6 +42,7 @@ class StudentAvailableExamView(APIView):
       return Response(serializer.data, status=status.HTTP_200_OK)
 
 class StudentExamHistoryView(APIView):
+  permission_classes = [IsStudent]
   def get(self, request):
     exams = Result.objects.select_related('exam').filter(student=request.user.student)\
       .values('exam__name', 'result', 'exam__total', 'exam')
@@ -51,7 +52,7 @@ class StudentExamHistoryView(APIView):
 
 
 class ExamSubmitView(APIView):
-  permission_classes=[IsAuthenticated]
+  permission_classes=[IsStudent]
   def post(self,request,exam):
     submit_data= request.data
     result = 0
@@ -86,7 +87,7 @@ class ExamSubmitView(APIView):
 
 
 class StudentExamDetailsViewSet(APIView):
-  permission_classes=[IsAuthenticated]
+  permission_classes=[IsStudent]
   def get(self,request,exam_id):
     exam = Exam.objects.get(id=exam_id)
     student_group = Professor_Student.objects.get(student=request.user.student, professor=exam.professor)
