@@ -52,7 +52,8 @@ class Result(models.Model):
         Exam, on_delete=models.CASCADE, related_name='result')
     result = models.PositiveSmallIntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
-
+    class Meta:
+        unique_together = ['student', 'exam']
 
 class ExamGroups(models.Model):
     exam = models.ForeignKey(Exam, on_delete=models.CASCADE,related_name='exam_groups')

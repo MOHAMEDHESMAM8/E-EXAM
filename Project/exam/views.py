@@ -1,8 +1,8 @@
+from datetime import datetime
 from .serializers import StudentAvailableExamSerializer, StudentExamHistorySerializer, StudentExamDetailsSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
 from .models import Exam, ExamGroups, ExamOptions, Result
 from question_bank.models import Question
 from user.models import Professor_Student, Student
@@ -35,7 +35,7 @@ class StudentAvailableExamView(APIView):
     def get(self, request):
       student_groups = Professor_Student.objects.filter(student=request.user.student).values_list('group', flat=True)
       student_exam = Result.objects.filter(student=request.user.student).values_list('exam', flat=True)
-      exams = ExamGroups.objects.filter(group__in=student_groups).select_related('exam')\
+      exams = ExamGroups.objects.filter(group__in=student_groups, start_at__lte = datetime.now(), end_at__gte=datetime.now()).select_related('exam')\
         .exclude(exam__in=student_exam).values('exam', 'exam__name', 
               'exam__time', 'start_at', 'end_at')
       serializer = StudentAvailableExamSerializer(exams, many=True)
@@ -82,7 +82,10 @@ class ExamSubmitView(APIView):
     student.rank= result
     student.save()
     
-    return Response({"result":result,"right_questions":right_questions,"wrong_questions":wrong_questions,"skipped_questions":skipped_questions}, 
+    return Response({"result":result,
+    "right_questions":right_questions,
+    "wrong_questions":wrong_questions,
+    "skipped_questions":skipped_questions}, 
             status=status.HTTP_201_CREATED)
 
 

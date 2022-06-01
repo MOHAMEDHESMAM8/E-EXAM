@@ -233,7 +233,7 @@ class StudentRank(APIView):
 
 
 class ProfessorRegisterView(APIView):
-    parser_classes = [MultiPartParser, FormParser]
+    # parser_classes = [MultiPartParser, FormParser]
     def post(self, request):
         serializer = ProfessorRegisterSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)

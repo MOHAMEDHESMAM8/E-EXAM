@@ -188,15 +188,26 @@ class ProfessorRegisterSerializer(serializers.ModelSerializer):
     user = UserCreateSerializer()
     class Meta:
         model = Professor
-        fields = ['user', 'avatar']
+        fields = ['user']
 
-    def create(self, validated_data):
-        user_data = validated_data.pop('user')
-        avatar = validated_data.pop('avatar')
-        print(user_data, avatar)
-        user_data['password'] = make_password(user_data['password'])
-        user = User.objects.create(**user_data,is_active=False, role='P')
-        professor = Professor.objects.get(user=user)
-        professor.avatar = avatar
-        professor.save()
-        return professor
+
+    def to_representation(self, instance):
+        data = super(ProfessorRegisterSerializer, self).to_representation(instance)
+        print(data)
+        user_data = data.pop('user')
+        for key, val in user_data.items():
+            data.update({key: val})
+        print(data)
+        return data
+
+    # def create(self, validated_data):
+    #     # user_data = validated_data.pop('user')
+    #     print (validated_data)
+    #     avatar = validated_data.pop('avatar')
+    #     # print(user_data, avatar)
+    #     # user_data['password'] = make_password(user_data['password'])
+    #     # user = User.objects.create(**user_data,is_active=False, role='P')
+    #     professor = Professor.objects.get(user=user)
+    #     professor.avatar = avatar
+    #     professor.save()
+    #     return professor
